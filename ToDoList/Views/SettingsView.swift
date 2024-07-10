@@ -9,7 +9,6 @@ import SwiftUI
 
 struct SettingsView: View {
     @AppStorage("deleteOnCompletion") var deleteOnCompletion = false
-    @State private var deleteTask = false
     
     var body: some View {
         ScrollView {

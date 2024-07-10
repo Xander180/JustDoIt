@@ -10,6 +10,7 @@ import SwiftUI
 struct AddView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var listViewModel: ListViewModel
+    @AppStorage("scheduleNotification") var scheduleNotification = false
     
     @State var textFieldText = ""
     
@@ -25,20 +26,23 @@ struct AddView: View {
                     .background(Color(UIColor.secondarySystemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 
-                Button(action: saveButtonPressed,
-                       label: {
-                        Text("Save".uppercased())
-                        .foregroundStyle(.white)
-                        .font(.headline)
-                        .frame(height: 55)
-                        .frame(maxWidth: .infinity)
-                        .background(Color.accentColor)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                })
+                Toggle("Set Reminder", isOn: $scheduleNotification)
             }
             .padding(14)
         }
         .navigationTitle("Add an Item 🖊️")
+        
+        Button(action: saveButtonPressed,
+               label: {
+            Text("Save".uppercased())
+                .foregroundStyle(.white)
+                .font(.headline)
+                .frame(height: 55)
+                .frame(maxWidth: .infinity)
+                .background(Color.accentColor)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+        })
+        .padding(14)
         .alert(alertTitle, isPresented: $showAlert) {
             
         }
