@@ -9,8 +9,8 @@ import Foundation
 import SwiftUI
 import UserNotifications
 
-class NotificationManagerModel {
-    static let instance = NotificationManagerModel() // Singleton
+class NotificationManagerViewModel {
+    static let instance = NotificationManagerViewModel() // Singleton
     
     func requestAuthorization() {
         let options: UNAuthorizationOptions = [.alert, .sound, .badge]
