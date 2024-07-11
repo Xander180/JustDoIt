@@ -17,39 +17,15 @@ struct ListView: View {
                 NoItemsView()
                     .transition(AnyTransition.opacity.animation(.easeIn))
             } else if isSorted {
-                List {
-                    ForEach(listViewModel.sortedItems) { item in
-                        ListRowView(item: item)
-                            .onTapGesture {
-                                withAnimation(.linear) {
-                                    listViewModel.updateItem(item: item)
-                                }
-                            }
-                    }
-                    .onDelete(perform: listViewModel.deleteItem)
-                    .onMove(perform: listViewModel.moveItem)
-                }
-                .listStyle(.plain)
+                sortedItemsView
             } else {
-                List {
-                    ForEach(listViewModel.items) { item in
-                        ListRowView(item: item)
-                            .onTapGesture {
-                                withAnimation(.linear) {
-                                    listViewModel.updateItem(item: item)
-                                }
-                            }
-                    }
-                    .onDelete(perform: listViewModel.deleteItem)
-                    .onMove(perform: listViewModel.moveItem)
-                }
-                .listStyle(.plain)
+                allItemsView
             }
         }
         .navigationTitle("Todo List 📝")
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
-                NavigationLink("Settings") { SettingsView() }
+                menuItems
             }
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink("Add", destination: AddView())
@@ -63,6 +39,64 @@ struct ListView: View {
         ListView()
     }
     .environmentObject(ListViewModel())
+}
+
+extension ListView {
+    private var allItemsView: some View {
+        List {
+            ForEach(listViewModel.items) { item in
+                ListRowView(item: item)
+                    .onTapGesture {
+                        withAnimation(.linear) {
+                            listViewModel.updateItem(item: item)
+                        }
+                    }
+            }
+            .onDelete(perform: listViewModel.deleteItem)
+            .onMove(perform: listViewModel.moveItem)
+        }
+        .listStyle(.plain)
+    }
+    
+    private var sortedItemsView: some View {
+        List {
+            ForEach(listViewModel.sortedItems) { item in
+                ListRowView(item: item)
+                    .onTapGesture {
+                        withAnimation(.linear) {
+                            listViewModel.updateItem(item: item)
+                        }
+                    }
+            }
+            .onDelete(perform: listViewModel.deleteItem)
+            .onMove(perform: listViewModel.moveItem)
+        }
+        .listStyle(.plain)
+    }
+    
+    private var menuItems: some View {
+        Menu {
+            Menu("Sort by") {
+                Button {
+                    isSorted.toggle()
+                    listViewModel.sortByTitle()
+                } label: {
+                    if isSorted {
+                        HStack {
+                            Image(systemName: "checkmark")
+                            Text("Alphabetical")
+                        }
+                    } else {
+                        Text("Alphabetical")
+                    }
+                }
+                
+            }
+            NavigationLink("Settings") { SettingsView() }
+        } label: {
+            Image(systemName: "line.3.horizontal")
+        }
+    }
 }
 
 
