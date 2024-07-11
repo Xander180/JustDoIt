@@ -22,7 +22,7 @@ struct ListView: View {
                 allItemsView
             }
         }
-        .navigationTitle("Todo List 📝")
+        .navigationTitle("Just Do It! 📝")
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 menuItems
@@ -78,17 +78,18 @@ extension ListView {
         Menu {
             Menu("Sort by") {
                 Button {
+                    isSorted = false
+                } label: {
+                    Image(systemName: !isSorted ? "checkmark" : "")
+                    Text("Default")
+                }
+                
+                Button {
                     isSorted.toggle()
                     listViewModel.sortByTitle()
                 } label: {
-                    if isSorted {
-                        HStack {
-                            Image(systemName: "checkmark")
-                            Text("Alphabetical")
-                        }
-                    } else {
-                        Text("Alphabetical")
-                    }
+                    Image(systemName: isSorted ? "checkmark" : "")
+                    Text("Alphabetical")
                 }
                 
             }
