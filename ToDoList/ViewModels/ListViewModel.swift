@@ -24,6 +24,8 @@ class ListViewModel: ObservableObject {
         }
     }
     
+    @Published var sortedItems: [ItemModel] = []
+    
     let itemsKey = "items_list"
     
     init() {
@@ -71,7 +73,10 @@ class ListViewModel: ObservableObject {
         items.remove(atOffsets: indexSet)
     }
     
-    
+    func sortByTitle() {
+        sortedItems.removeAll()
+        sortedItems = items.sorted(by: { $0.title < $1.title})
+    }
     
     
 }
