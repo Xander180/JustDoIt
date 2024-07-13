@@ -23,20 +23,17 @@ class NotificationManagerViewModel {
         }
     }
     
-    func scheduleNotification() {
+    func scheduleNotification(subtitle: String, date: Date) {
         let content = UNMutableNotificationContent()
-        content.title = ""
-        content.subtitle = ""
+        content.title = "Task is due soon!"
+        content.subtitle = "Test"
         content.sound = .default
         content.badge = NSNumber(value: UIApplication.shared.applicationIconBadgeNumber + 1)
         
-        var dateComponents = DateComponents()
-        var repeatNotification = false
-        dateComponents.hour = 0
-        dateComponents.minute = 0
-        dateComponents.weekday = 0
+        let dateComponents = DateComponents(year: date.get(.year), month: date.get(.month), day: date.get(.day))
         
-        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: repeatNotification)
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
         
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request)
@@ -45,5 +42,24 @@ class NotificationManagerViewModel {
     func cancelNotifications() {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+    }
+    
+    func getPendingNotifications() {
+        UNUserNotificationCenter.current()
+            .getPendingNotificationRequests(completionHandler: { requests in
+                for (index, request) in requests.enumerated() {
+                    print("notification: \(index) \(request.identifier) \(String(describing: request.trigger))")
+                }
+            })
+    }
+}
+
+extension Date {
+    func get(_ components: Calendar.Component..., calendar: Calendar = Calendar.current) -> DateComponents {
+        return calendar.dateComponents(Set(components), from: self)
+    }
+    
+    func get(_ component: Calendar.Component, calendar: Calendar = Calendar.current) -> Int {
+        return calendar.component(component, from: self)
     }
 }

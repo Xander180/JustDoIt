@@ -10,23 +10,40 @@ import SwiftUI
 struct AddView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var listViewModel: ListViewModel
-    @AppStorage("scheduleNotification") var scheduleNotification = false
     
-    @State var textFieldText = ""
+    @State var scheduleNotification = false
+    @State var showReminderOptions = false
+    @State var selectedDate: Date = Date()
+    
+    @State var taskTitle = ""
     
     @State var alertTitle = ""
     @State var showAlert = false
     
+    
     var body: some View {
         ScrollView {
             VStack {
-                TextField("Type something here...", text: $textFieldText)
+                TextField("Type something here...", text: $taskTitle)
                     .padding(.horizontal)
                     .frame(height: 55)
                     .background(Color(UIColor.secondarySystemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 
-                Toggle("Set Reminder", isOn: $scheduleNotification)
+                VStack(spacing: 20) {
+                    Toggle("Set Reminder", isOn: $scheduleNotification)
+                        .onChange(of: scheduleNotification) { oldValue, newValue in
+                            showReminderOptions.toggle()
+                        }
+                    if showReminderOptions {
+                        withAnimation(.bouncy) {
+                            DatePicker("Set a Reminder", selection: $selectedDate, displayedComponents: [.date, .hourAndMinute])
+                                .onAppear(perform: {
+                                    NotificationManagerViewModel.instance.requestAuthorization()
+                                })
+                        }
+                    }
+                }
             }
             .padding(14)
         }
@@ -50,13 +67,16 @@ struct AddView: View {
     
     func saveButtonPressed() {
         if textIsNotEmpty() {
-            listViewModel.addItem(title: textFieldText)
+            listViewModel.addItem(title: taskTitle, date: selectedDate, dateSet: scheduleNotification)
+            if showReminderOptions {
+                NotificationManagerViewModel.instance.scheduleNotification(subtitle: taskTitle ,date: selectedDate)
+            }
             dismiss.callAsFunction()
         }
     }
     
     func textIsNotEmpty() -> Bool {
-        if textFieldText.isEmpty {
+        if taskTitle.isEmpty {
             alertTitle = "Text field must not be empty!"
             showAlert.toggle()
             return false

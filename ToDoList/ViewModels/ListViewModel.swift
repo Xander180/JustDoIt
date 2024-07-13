@@ -30,11 +30,12 @@ class ListViewModel: ObservableObject {
     
     init() {
         getItems()
+        NotificationManagerViewModel.instance.getPendingNotifications()
     }
     
     // CREATE
-    func addItem(title: String) {
-        let newItem = ItemModel(title: title, isCompleted: false)
+    func addItem(title: String, date: Date, dateSet: Bool) {
+        let newItem = ItemModel(title: title, date: date, dateSet: dateSet, isCompleted: false)
         items.append(newItem)
     }
     
@@ -76,6 +77,11 @@ class ListViewModel: ObservableObject {
     func sortByTitle() {
         sortedItems.removeAll()
         sortedItems = items.sorted(by: { $0.title < $1.title})
+    }
+    
+    func sortByDate() {
+        sortedItems.removeAll()
+        sortedItems = items.sorted(by: {$0.date < $1.date})
     }
     
     
