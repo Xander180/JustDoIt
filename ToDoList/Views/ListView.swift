@@ -10,13 +10,14 @@ import SwiftUI
 struct ListView: View {
     @EnvironmentObject var listViewModel: ListViewModel
     @State private var isSorted = false
-    @State private var selection = 0
-    let filterOptions: [String] = [
-        "Default", "Alphabetical", "Date"
-    ]
+    @State var selection = sortByOptions.original
     
-    enum filters {
-        case original, alphabetical, date
+    enum sortByOptions: String, CaseIterable, Identifiable {
+        case original = "Default",
+             alphabetical = "Alphabetical",
+             date = "Date"
+        
+        var id: Self { self }
     }
     
     var body: some View {
@@ -32,15 +33,15 @@ struct ListView: View {
         }
         .navigationTitle("Just Do It! 📝")
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                menuItems
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink("Add", destination: AddView())
-            }
+            ToolbarItem(placement: .topBarLeading) { menuItems }
+            ToolbarItem(placement: .topBarTrailing) { NavigationLink("Add", destination: AddView()) }
         }
         .onAppear {
             UNUserNotificationCenter.current().setBadgeCount(0)
+            listViewModel.getItems()
+        }
+        .onChange(of: listViewModel.items) { oldValue, newValue in
+            listViewModel.sortList(selection: selection.rawValue)
         }
     }
     
@@ -74,52 +75,37 @@ extension ListView {
     
     private var sortedItemsView: some View {
         List {
-            ForEach(listViewModel.sortedItems) { item in
+            ForEach(listViewModel.sortedItems, id: \.self) { item in
                 ListRowView(item: item)
                     .onTapGesture {
                         withAnimation(.linear) {
                             listViewModel.updateItem(item: item)
                         }
                     }
+                    .listRowSeparator(.hidden)
             }
             .onDelete(perform: listViewModel.deleteItem)
             .onMove(perform: listViewModel.moveItem)
         }
         .listStyle(.plain)
+        .listRowSeparator(.hidden)
     }
     
     private var menuItems: some View {
         Menu {
             Menu("Sort by") {
-//                Button {
-//                    isSorted = false
-//                } label: {
-//                    Image(systemName: !isSorted ? "checkmark" : "")
-//                    Text("Default")
-//                }
-//                
-//                Button {
-//                    isSorted.toggle()
-//                    listViewModel.sortByTitle()
-//                } label: {
-//                    Image(systemName: isSorted ? "checkmark" : "")
-//                    Text("Alphabetical")
-//                }
-//                
-//                Button {
-//                    isSorted.toggle()
-//                    listViewModel.sortByDate()
-//                } label: {
-//                    Image(systemName: isSorted ? "checkmark" : "")
-//                    Text("Date")
-//                }
                 Picker("Menu", selection: $selection) {
-                    ForEach(filterOptions.indices) { index in
-                        Text(filterOptions[index])
-                            .tag(filterOptions[index])
+                    ForEach(sortByOptions.allCases, id: \.self) { option in
+                        Text(option.rawValue)
                     }
                 }
                 .onChange(of: selection) { oldValue, newValue in
+                    if selection.rawValue == "Default" {
+                        isSorted = false
+                    } else {
+                        isSorted = true
+                    }
+                    listViewModel.sortList(selection: selection.rawValue)
                     
                 }
                 
@@ -130,5 +116,3 @@ extension ListView {
         }
     }
 }
-
-

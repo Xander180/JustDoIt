@@ -74,15 +74,17 @@ class ListViewModel: ObservableObject {
         items.remove(atOffsets: indexSet)
     }
     
-    func sortByTitle() {
-        sortedItems.removeAll()
-        sortedItems = items.sorted(by: { $0.title < $1.title})
+    func sortList(selection: String) {
+        switch selection {
+        case "Alphabetical":
+            sortedItems.removeAll()
+            sortedItems = items.sorted(by: { $0.title < $1.title})
+        case "Date":
+            sortedItems.removeAll()
+            sortedItems = items.sorted(by: {$0.date > $1.date})
+        default:
+            getItems()
+        }
+        
     }
-    
-    func sortByDate() {
-        sortedItems.removeAll()
-        sortedItems = items.sorted(by: {$0.date < $1.date})
-    }
-    
-    
 }

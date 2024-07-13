@@ -13,7 +13,7 @@ struct AddView: View {
     
     @State var scheduleNotification = false
     @State var showReminderOptions = false
-    @State var selectedDate: Date = Date()
+    @State var selectedDate: Date = Date.now
     
     @State var taskTitle = ""
     
