@@ -74,6 +74,10 @@ class ListViewModel: ObservableObject {
         items.remove(atOffsets: indexSet)
     }
     
+    func deleteAllItems() {
+        items.removeAll()
+    }
+    
     func sortList(selection: String) {
         switch selection {
         case "Alphabetical":

@@ -12,6 +12,11 @@ struct ListView: View {
     @State private var isSorted = false
     @State var selection = sortByOptions.original
     
+    let shadowColor: Color = .black.opacity(1)
+    let shadowRadius: CGFloat = 10
+    let shadowX: CGFloat = -5
+    let shadowY: CGFloat = 5
+    
     enum sortByOptions: String, CaseIterable, Identifiable {
         case original = "Default",
              alphabetical = "Alphabetical",
@@ -57,7 +62,7 @@ struct ListView: View {
 
 extension ListView {
     private var allItemsView: some View {
-        List {
+        ScrollView {
             ForEach(listViewModel.items) { item in
                 ListRowView(item: item)
                     .onTapGesture {
@@ -65,16 +70,18 @@ extension ListView {
                             listViewModel.updateItem(item: item)
                         }
                     }
-                    .listRowSeparator(.hidden)
+                
+                Divider()
             }
             .onDelete(perform: listViewModel.deleteItem)
             .onMove(perform: listViewModel.moveItem)
         }
-        .listStyle(.plain)
+        .padding()
+        .shadow(color: shadowColor, radius: shadowRadius, x: shadowX, y: shadowY)
     }
     
     private var sortedItemsView: some View {
-        List {
+        ScrollView {
             ForEach(listViewModel.sortedItems, id: \.self) { item in
                 ListRowView(item: item)
                     .onTapGesture {
@@ -82,13 +89,14 @@ extension ListView {
                             listViewModel.updateItem(item: item)
                         }
                     }
-                    .listRowSeparator(.hidden)
+                
+                Divider()
             }
             .onDelete(perform: listViewModel.deleteItem)
             .onMove(perform: listViewModel.moveItem)
         }
-        .listStyle(.plain)
-        .listRowSeparator(.hidden)
+        .padding()
+        .shadow(color: shadowColor, radius: shadowRadius, x: shadowX, y: shadowY)
     }
     
     private var menuItems: some View {

@@ -40,12 +40,9 @@ struct ListRowView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .background(Color.red)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
         .padding(.horizontal, 5)
         .padding(.bottom, 10)
-        .shadow(color: .black.opacity(0.5), radius: 10, x: -5, y: 5)
-        
+        .background(RoundedRectangle(cornerRadius: 10).fill(Color.white))
     }
 }
 
