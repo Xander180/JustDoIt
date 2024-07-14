@@ -11,19 +11,21 @@ import Foundation
 struct ItemModel: Identifiable, Codable, Hashable {
     let id: String
     let title: String
-    let date: Date
-    let dateSet: Bool
+    let dateCreated: Date
+    let dateReminder: Date
+    let reminderSet: Bool
     let isCompleted: Bool
     
-    init(id: String = UUID().uuidString, title: String, date: Date, dateSet: Bool, isCompleted: Bool) {
+    init(id: String = UUID().uuidString, title: String, dateCreated: Date, dateReminder: Date, reminderSet: Bool, isCompleted: Bool) {
         self.id = id
         self.title = title
-        self.date = date
-        self.dateSet = dateSet
+        self.dateCreated = dateCreated
+        self.dateReminder = dateReminder
+        self.reminderSet = reminderSet
         self.isCompleted = isCompleted
     }
     
     func updateCompletion() -> ItemModel {
-        return ItemModel(id: id, title: title, date: date, dateSet: dateSet, isCompleted: !isCompleted)
+        return ItemModel(title: title, dateCreated: dateCreated, dateReminder: dateReminder, reminderSet: reminderSet, isCompleted: isCompleted)
     }
 }

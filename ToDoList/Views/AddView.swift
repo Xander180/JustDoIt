@@ -31,18 +31,20 @@ struct AddView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 
                 VStack(spacing: 20) {
-                    Toggle("Set Reminder", isOn: $scheduleNotification)
-                        .onChange(of: scheduleNotification) { oldValue, newValue in
-                            showReminderOptions.toggle()
-                        }
                     if showReminderOptions {
                         withAnimation(.bouncy) {
-                            DatePicker("Set a Reminder", selection: $selectedDate, displayedComponents: [.date, .hourAndMinute])
+                            DatePicker("Due date", selection: $selectedDate, displayedComponents: [.date, .hourAndMinute])
                                 .onAppear(perform: {
                                     NotificationManagerViewModel.instance.requestAuthorization()
                                 })
                         }
                     }
+                    
+                    Toggle("Set Reminder", isOn: $scheduleNotification)
+                        .onChange(of: scheduleNotification) { oldValue, newValue in
+                            showReminderOptions.toggle()
+                        }
+                    
                 }
             }
             .padding(14)
@@ -67,7 +69,7 @@ struct AddView: View {
     
     func saveButtonPressed() {
         if textIsNotEmpty() {
-            listViewModel.addItem(title: taskTitle, date: selectedDate, dateSet: scheduleNotification)
+            listViewModel.addItem(title: taskTitle, dateReminder: selectedDate, reminderSet: scheduleNotification)
             if showReminderOptions {
                 NotificationManagerViewModel.instance.scheduleNotification(subtitle: taskTitle ,date: selectedDate)
             }

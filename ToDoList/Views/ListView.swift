@@ -39,7 +39,10 @@ struct ListView: View {
         .navigationTitle("Just Do It! 📝")
         .toolbar {
             ToolbarItem(placement: .topBarLeading) { menuItems }
-            ToolbarItem(placement: .topBarTrailing) { NavigationLink("Add", destination: AddView()) }
+            ToolbarItem(placement: .bottomBar) {  NavigationLink(destination: AddView()) {
+                Image(systemName: "plus")
+            }
+            }
         }
         .onAppear {
             UNUserNotificationCenter.current().setBadgeCount(0)
@@ -62,41 +65,40 @@ struct ListView: View {
 
 extension ListView {
     private var allItemsView: some View {
-        ScrollView {
+        List {
             ForEach(listViewModel.items) { item in
                 ListRowView(item: item)
+                    .listRowBackground(RoundedRectangle(cornerRadius: 10)
+                        .foregroundStyle(item.reminderSet ? NotificationManagerViewModel.instance.checkDate(date: item.dateReminder) : Color.white))
                     .onTapGesture {
                         withAnimation(.linear) {
                             listViewModel.updateItem(item: item)
                         }
                     }
-                
-                Divider()
             }
             .onDelete(perform: listViewModel.deleteItem)
             .onMove(perform: listViewModel.moveItem)
         }
-        .padding()
-        .shadow(color: shadowColor, radius: shadowRadius, x: shadowX, y: shadowY)
+        .listStyle(.plain)
+        .padding(.horizontal)
+        .listRowSpacing(8.0)
     }
     
     private var sortedItemsView: some View {
-        ScrollView {
+        List {
             ForEach(listViewModel.sortedItems, id: \.self) { item in
                 ListRowView(item: item)
+                    .listRowBackground(RoundedRectangle(cornerRadius: 10)
+                        .foregroundStyle(item.reminderSet ? NotificationManagerViewModel.instance.checkDate(date: item.dateReminder) : Color.white))
                     .onTapGesture {
                         withAnimation(.linear) {
                             listViewModel.updateItem(item: item)
                         }
                     }
-                
-                Divider()
             }
             .onDelete(perform: listViewModel.deleteItem)
             .onMove(perform: listViewModel.moveItem)
         }
-        .padding()
-        .shadow(color: shadowColor, radius: shadowRadius, x: shadowX, y: shadowY)
     }
     
     private var menuItems: some View {

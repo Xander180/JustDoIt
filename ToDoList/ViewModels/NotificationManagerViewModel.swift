@@ -52,6 +52,17 @@ class NotificationManagerViewModel {
                 }
             })
     }
+    
+    func checkDate(date: Date) -> Color {
+        if Calendar.current.isDateInToday(date) {
+            return .red
+        } else if Calendar.current.isDateInTomorrow(date) {
+            return .yellow
+        }
+        return .green
+        
+        
+    }
 }
 
 extension Date {
