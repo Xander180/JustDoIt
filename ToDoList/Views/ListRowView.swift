@@ -34,8 +34,8 @@ struct ListRowView: View {
             // Allows entire cell to be tappable, as opposed to only the text and checkmark area
             .background(Color.black.opacity(0.001))
             
-            if item.reminderSet {
-                Text(dateFormatter.string(from: item.dateReminder))
+            if item.dueDateSet {
+                Text(dateFormatter.string(from: item.dueDate))
                     .padding(.leading, 20)
                     .foregroundStyle(.secondary)
                     .font(.subheadline)
@@ -50,8 +50,8 @@ struct ListRowView: View {
 
 #Preview(traits: .sizeThatFitsLayout) {
     Group {
-        ListRowView(item: ItemModel(title: "This is the first item", dateCreated: Date.now, dateReminder: Date.now, reminderSet: false, isCompleted: false))
-        ListRowView(item: ItemModel(title: "This is the second item", dateCreated: Date.now, dateReminder: Date.now, reminderSet: true, isCompleted: true))
+        ListRowView(item: ItemModel(title: "This is the first item", createdDate: Date.now, dueDate: Date.now, dueDateSet: false, isCompleted: false))
+        ListRowView(item: ItemModel(title: "This is the second item", createdDate: Date.now, dueDate: Date.now, dueDateSet: true, isCompleted: true))
     }
     .environmentObject(ListViewModel())
 }

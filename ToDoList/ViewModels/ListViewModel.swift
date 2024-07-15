@@ -34,8 +34,8 @@ class ListViewModel: ObservableObject {
     }
     
     // CREATE
-    func addItem(title: String, dateReminder: Date, reminderSet: Bool) {
-        let newItem = ItemModel(title: title, dateCreated: Date.now, dateReminder: dateReminder, reminderSet: reminderSet, isCompleted: false)
+    func addItem(title: String, dueDate: Date, dueDateSet: Bool) {
+        let newItem = ItemModel(title: title, createdDate: Date.now, dueDate: dueDate, dueDateSet: dueDateSet, isCompleted: false)
         items.append(newItem)
     }
     
@@ -85,7 +85,7 @@ class ListViewModel: ObservableObject {
             sortedItems = items.sorted(by: { $0.title < $1.title})
         case "Date":
             sortedItems.removeAll()
-            sortedItems = items.sorted(by: {$0.dateCreated > $1.dateCreated})
+            sortedItems = items.sorted(by: {$0.createdDate > $1.createdDate})
         default:
             getItems()
         }

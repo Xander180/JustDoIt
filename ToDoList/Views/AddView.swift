@@ -11,6 +11,7 @@ struct AddView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var listViewModel: ListViewModel
     
+    @State var showDueDate = false
     @State var scheduleNotification = false
     @State var showReminderOptions = false
     @State var selectedDate: Date = Date.now
@@ -31,20 +32,22 @@ struct AddView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 
                 VStack(spacing: 20) {
-                    if showReminderOptions {
-                        withAnimation(.bouncy) {
-                            DatePicker("Due date", selection: $selectedDate, displayedComponents: [.date, .hourAndMinute])
-                                .onAppear(perform: {
-                                    NotificationManagerViewModel.instance.requestAuthorization()
-                                })
-                        }
-                    }
-                    
-                    Toggle("Set Reminder", isOn: $scheduleNotification)
-                        .onChange(of: scheduleNotification) { oldValue, newValue in
+                    Toggle("Due Date", isOn: $showDueDate)
+                        .onChange(of: showDueDate) { oldValue, newValue in
                             showReminderOptions.toggle()
                         }
                     
+                    if showReminderOptions {
+                        withAnimation(.easeIn) {
+                            DatePicker("Due date", selection: $selectedDate, displayedComponents: [.date, .hourAndMinute])
+                                .labelsHidden()
+                        }
+                        
+                        Toggle("Set Reminder", isOn: $scheduleNotification)
+                            .onChange(of: scheduleNotification) { oldValue, newValue in
+                                NotificationManagerViewModel.instance.requestAuthorization()
+                            }
+                    }
                 }
             }
             .padding(14)
@@ -69,8 +72,8 @@ struct AddView: View {
     
     func saveButtonPressed() {
         if textIsNotEmpty() {
-            listViewModel.addItem(title: taskTitle, dateReminder: selectedDate, reminderSet: scheduleNotification)
-            if showReminderOptions {
+            listViewModel.addItem(title: taskTitle, dueDate: selectedDate, dueDateSet: showDueDate)
+            if scheduleNotification {
                 NotificationManagerViewModel.instance.scheduleNotification(subtitle: taskTitle ,date: selectedDate)
             }
             dismiss.callAsFunction()

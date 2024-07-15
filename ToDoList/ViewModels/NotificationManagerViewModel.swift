@@ -28,7 +28,7 @@ class NotificationManagerViewModel {
         content.title = "Task is due soon!"
         content.subtitle = "Test"
         content.sound = .default
-        content.badge = NSNumber(value: UIApplication.shared.applicationIconBadgeNumber + 1)
+        //content.badge = NSNumber(value: UIApplication.shared.applicationIconBadgeNumber + 1)
         
         let dateComponents = DateComponents(year: date.get(.year), month: date.get(.month), day: date.get(.day))
         

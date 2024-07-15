@@ -69,7 +69,7 @@ extension ListView {
             ForEach(listViewModel.items) { item in
                 ListRowView(item: item)
                     .listRowBackground(RoundedRectangle(cornerRadius: 10)
-                        .foregroundStyle(item.reminderSet ? NotificationManagerViewModel.instance.checkDate(date: item.dateReminder) : Color.white))
+                        .foregroundStyle(item.dueDateSet ? NotificationManagerViewModel.instance.checkDate(date: item.dueDate) : Color.white))
                     .onTapGesture {
                         withAnimation(.linear) {
                             listViewModel.updateItem(item: item)
@@ -89,7 +89,7 @@ extension ListView {
             ForEach(listViewModel.sortedItems, id: \.self) { item in
                 ListRowView(item: item)
                     .listRowBackground(RoundedRectangle(cornerRadius: 10)
-                        .foregroundStyle(item.reminderSet ? NotificationManagerViewModel.instance.checkDate(date: item.dateReminder) : Color.white))
+                        .foregroundStyle(item.dueDateSet ? NotificationManagerViewModel.instance.checkDate(date: item.dueDate) : Color.white))
                     .onTapGesture {
                         withAnimation(.linear) {
                             listViewModel.updateItem(item: item)
