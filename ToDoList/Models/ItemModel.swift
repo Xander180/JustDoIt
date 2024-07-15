@@ -26,6 +26,6 @@ struct ItemModel: Identifiable, Codable, Hashable {
     }
     
     func updateCompletion() -> ItemModel {
-        return ItemModel(title: title, createdDate: createdDate, dueDate: dueDate, dueDateSet: dueDateSet, isCompleted: isCompleted)
+        return ItemModel(id: id, title: title, createdDate: createdDate, dueDate: dueDate, dueDateSet: dueDateSet, isCompleted: !isCompleted)
     }
 }
