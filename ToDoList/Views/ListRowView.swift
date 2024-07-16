@@ -34,11 +34,18 @@ struct ListRowView: View {
             // Allows entire cell to be tappable, as opposed to only the text and checkmark area
             .background(Color.black.opacity(0.001))
             
+            
             if item.dueDateSet {
-                Text(dateFormatter.string(from: item.dueDate))
-                    .padding(.leading, 20)
-                    .foregroundStyle(.secondary)
-                    .font(.subheadline)
+                HStack {
+                    Text(dateFormatter.string(from: item.dueDate))
+                        .padding(.leading, 20)
+                        .foregroundStyle(.secondary)
+                        .font(.subheadline)
+                    
+                    Text(NotificationManagerViewModel.instance.checkDueDate(date: item.dueDate))
+                        .foregroundStyle(NotificationManagerViewModel.instance.dueDateColor(date: item.dueDate))
+                        .fontWeight(.bold)
+                }
             }
         }
         .frame(maxWidth: .infinity)

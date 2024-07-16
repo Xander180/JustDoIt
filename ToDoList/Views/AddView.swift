@@ -14,7 +14,7 @@ struct AddView: View {
     @State var showDueDate = false
     @State var scheduleNotification = false
     @State var showReminderOptions = false
-    @State var selectedDate: Date = Date.now
+    @State var dueDate: Date = Date.now
     
     @State var taskTitle = ""
     
@@ -39,7 +39,7 @@ struct AddView: View {
                     
                     if showReminderOptions {
                         withAnimation(.easeIn) {
-                            DatePicker("Due date", selection: $selectedDate, displayedComponents: [.date, .hourAndMinute])
+                            DatePicker("Due date", selection: $dueDate, displayedComponents: [.date, .hourAndMinute])
                                 .labelsHidden()
                         }
                         
@@ -72,9 +72,9 @@ struct AddView: View {
     
     func saveButtonPressed() {
         if textIsNotEmpty() {
-            listViewModel.addItem(title: taskTitle, dueDate: selectedDate, dueDateSet: showDueDate)
+            listViewModel.addItem(title: taskTitle, dueDate: dueDate, dueDateSet: showDueDate)
             if scheduleNotification {
-                NotificationManagerViewModel.instance.scheduleNotification(subtitle: taskTitle ,date: selectedDate)
+                NotificationManagerViewModel.instance.scheduleNotification(subtitle: taskTitle ,date: dueDate)
             }
             dismiss.callAsFunction()
         }

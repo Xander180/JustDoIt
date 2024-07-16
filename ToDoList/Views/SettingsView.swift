@@ -22,13 +22,15 @@ struct SettingsView: View {
         }
         .navigationTitle("Settings ⚙️")
         
+        Text("Build ver. 0.1.0")
+        
         Button("Delete All") {
             showAlert.toggle()
         }
         .foregroundStyle(Color.red)
         .confirmationDialog("WARNING", isPresented: $showAlert) {
             Button("Delete All", role: .destructive) {
-                listViewModel.deleteAllItems()
+                listViewModel.deleteAll()
             }
             Button("Cancel", role: .cancel) {}
         } message: {

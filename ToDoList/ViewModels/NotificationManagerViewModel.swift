@@ -53,15 +53,30 @@ class NotificationManagerViewModel {
             })
     }
     
-    func checkDate(date: Date) -> Color {
-        if Calendar.current.isDateInToday(date) {
-            return .red
-        } else if Calendar.current.isDateInTomorrow(date) {
-            return .yellow
+    func checkDueDate(date: Date) -> String {
+        if Calendar.current.isDateInTomorrow(date) {
+            return "Due tomorrow"
+        } else if Calendar.current.isDateInToday(date) {
+            return "Due today"
+        } else if date.timeIntervalSinceNow.sign == .minus {
+            return "Past due"
         }
-        return .green
         
+        return ""
         
+    }
+    
+    func dueDateColor(date: Date) -> Color {
+        switch checkDueDate(date: date) {
+        case "Due tomorrow":
+            return .yellow
+        case "Due today":
+            return .red
+        case "Past due":
+            return .red
+        default:
+            return .green
+        }
     }
 }
 
