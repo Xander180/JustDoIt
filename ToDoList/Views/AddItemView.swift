@@ -7,19 +7,19 @@
 
 import SwiftUI
 
-struct AddView: View {
+struct AddItemView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var listViewModel: ListViewModel
     
-    @State var showDueDate = false
-    @State var scheduleNotification = false
-    @State var showReminderOptions = false
-    @State var dueDate: Date = Date.now
+    @State private var showDueDate = false
+    @State private var scheduleNotification = false
+    @State private var showReminderOptions = false
+    @State private var dueDate: Date = Date.now
     
-    @State var taskTitle = ""
+    @State private var taskTitle = ""
     
-    @State var alertTitle = ""
-    @State var showAlert = false
+    @State private var alertTitle = ""
+    @State private var showAlert = false
     
     
     var body: some View {
@@ -92,7 +92,7 @@ struct AddView: View {
 
 #Preview {
     NavigationStack {
-        AddView()
+        AddItemView()
     }
     .environmentObject(ListViewModel())
 }

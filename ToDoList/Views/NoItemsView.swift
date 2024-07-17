@@ -21,7 +21,7 @@ struct NoItemsView: View {
                 
                 
                 NavigationLink("Add Something") {
-                    AddView()
+                    AddItemView()
                 }
                 .foregroundStyle(Color.white)
                 .font(.headline)

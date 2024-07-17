@@ -24,9 +24,11 @@ struct ListRowView: View {
             HStack {
                 Text(item.title)
                 Spacer()
-                Image(systemName: item.isCompleted ? "checkmark.circle" : "circle")
+                Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
                     .font(.largeTitle)
-                    //.foregroundStyle(item.isCompleted ? .green : .red)
+                    .background(Color.white)
+                    .clipShape(Circle())
+                    //.addBorder(Color.black, width: 2, cornerRadius: 20)
             }
             .font(.title2)
             .padding(.vertical, 8)
@@ -43,7 +45,6 @@ struct ListRowView: View {
                         .font(.subheadline)
                     
                     Text(NotificationManagerViewModel.instance.checkDueDate(date: item.dueDate))
-                        .foregroundStyle(NotificationManagerViewModel.instance.dueDateColor(date: item.dueDate))
                         .fontWeight(.bold)
                 }
             }
@@ -51,7 +52,10 @@ struct ListRowView: View {
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 5)
         .padding(.bottom, 10)
+        .background(item.dueDateSet ? NotificationManagerViewModel.instance.dueDateColor(date: item.dueDate) : Color.defaultItem)
         .clipShape(RoundedRectangle(cornerRadius: 10))
+        .addBorder(item.dueDateSet ? NotificationManagerViewModel.instance.dueDateColor(date: item.dueDate) : Color.primary, width: 1, cornerRadius: 10)
+        
     }
 }
 

@@ -25,6 +25,12 @@ class ListViewModel: ObservableObject {
     }
     @Published var sortedItems: [ItemModel] = []
     
+    @Published var defaultFolders: [FolderModel] = [FolderModel(icon: "tray.circle.fill", title: "All"), FolderModel(icon: "checkmark.seal.fill", title: "Completed")] {
+        didSet {
+            saveFolders()
+        }
+    }
+    
     @Published var folders: [FolderModel] = [] {
         didSet {
             saveFolders()
@@ -32,6 +38,7 @@ class ListViewModel: ObservableObject {
     }
     
     let itemsKey = "items_list"
+    let defaultFoldersKey = "default_folders"
     let foldersKey = "folders_list"
     
     init() {
@@ -73,13 +80,25 @@ class ListViewModel: ObservableObject {
     
     // UPDATE
     func updateItem(item: ItemModel, folder: String = "") {
-        if let index = items.firstIndex(where: { $0.id == item.id }) {
-            items[index] = item.updateCompletion()
-            items[index] = item.addToFolder(folderName: folder)
-            if items[index].isCompleted && SettingsView().deleteOnCompletion {
-                deleteItem(indexSet: IndexSet(integer: index))
+        if let itemIndex = items.firstIndex(where: { $0.id == item.id }) {
+            items[itemIndex] = item.updateCompletion()
+            
+            if let folderIndex = defaultFolders.firstIndex(where: { $0.title == "Completed"}) {
+                if items[itemIndex].isCompleted {
+                   _ = defaultFolders[folderIndex].addItem(newItem: item)
+                } else {
+                    defaultFolders[folderIndex].items.removeAll(where: { $0.id == item.id} )
+                }
+                
+            }
+            if items[itemIndex].isCompleted {
+                deleteItem(indexSet: IndexSet(integer: itemIndex))
+            } else {
+                addItem(title: item.title, dueDate: item.dueDate, dueDateSet: item.dueDateSet)
             }
         }
+        
+        
     }
     
     func saveItems() {
@@ -92,6 +111,10 @@ class ListViewModel: ObservableObject {
         if let encodedData = try? JSONEncoder().encode(folders) {
             UserDefaults.standard.set(encodedData, forKey: foldersKey)
         }
+        
+        if let encodedData = try? JSONEncoder().encode(defaultFolders) {
+            UserDefaults.standard.set(encodedData, forKey: defaultFoldersKey)
+        }
     }
     
     //DELETE
@@ -101,7 +124,10 @@ class ListViewModel: ObservableObject {
     
     func deleteAll() {
         items.removeAll()
-        folders.removeAll()
+        //folders.removeAll()
+        folders.removeAll(where: {$0.id != "5FD30E9E-58E6-4A43-913C-FF4B146459EA"})
+        print(folders[0].id)
+        
     }
     
     func deleteFolder(indexSet: IndexSet) {

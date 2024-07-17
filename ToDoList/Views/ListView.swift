@@ -35,11 +35,12 @@ struct ListView: View {
     
     var body: some View {
         ZStack {
-            if listViewModel.items.isEmpty && listViewModel.folders.isEmpty {
-                NoItemsView()
-                    .transition(AnyTransition.opacity.animation(.easeIn))
-            } else {
+            VStack {
                 itemsView
+                if listViewModel.items.isEmpty && listViewModel.folders.isEmpty {
+                    NoItemsView()
+                        .transition(AnyTransition.opacity.animation(.easeIn))
+                }
             }
         }
         .navigationTitle("Just Do It! 📝")
@@ -69,33 +70,24 @@ extension ListView {
         ToolbarItem(placement: .topBarTrailing) { menuItems }
         ToolbarItem(placement: .bottomBar) {
             HStack {
-                NavigationLink(destination: AddView()) {
-                    HStack {
-                        Image(systemName: "plus.circle.fill")
-                        Text("New Task")
-                            .fontWeight(.bold)
+                if !listViewModel.items.isEmpty {
+                    NavigationLink(destination: AddItemView()) {
+                        
+                        HStack {
+                            Image(systemName: "plus.circle.fill")
+                            Text("New Task")
+                                .fontWeight(.bold)
+                        }
+                        .font(.title2)
                     }
-                    .font(.title2)
                 }
                 
                 Spacer()
                 
-                Button("New Folder") {
-                    showAlert.toggle()
-                }
-                .font(.title3)
-                .foregroundStyle(.accent)
-                .alert("New Folder", isPresented: $showAlert) {
-                    TextField("Enter folder name", text: $folderName)
-                    Button("Create") {
-                        listViewModel.addFolder(icon: folderIcon, title: folderName)
-                        folderName = ""
-                        print("Created")
-                        print("\(listViewModel.folders)")
-                    }
-                    .disabled(folderName.isEmpty ? true : false)
-                    
-                    Button("Cancel", role: .cancel) {}
+                NavigationLink(destination: AddFolderView()) {
+                    Text("New Folder")
+                        .font(.title3)
+                        .foregroundStyle(.accent)
                 }
             }
         }
@@ -104,33 +96,31 @@ extension ListView {
     private var itemsView: some View {
         List {
             LazyVGrid(columns: columns) {
+                ForEach(listViewModel.defaultFolders) { folder in
+                    FolderGridView(folder: folder)
+                        .listRowSeparator(.hidden)
+                        .foregroundStyle(Color.defaultItem)
+                }
                 ForEach(listViewModel.folders) { folder in
-                    Button {
-                        
-                    } label: {
-                        FolderGridView(folder: folder)
-                            .listRowSeparator(.hidden)
-                            .listRowBackground(RoundedRectangle(cornerRadius: 10))
-                            .foregroundStyle(Color.defaultItem)
-                    }
+                    FolderGridView(folder: folder)
+                        .listRowSeparator(.hidden)
+                        .foregroundStyle(Color.defaultItem)
                 }
                 .onDelete(perform: listViewModel.deleteFolder)
                 .onMove(perform: listViewModel.moveFolder)
             }
+            .onAppear {
+                print(listViewModel.folders)
+            }
+            
             Text(listViewModel.items.isEmpty ? "" : "All")
                 .font(.largeTitle)
                 .fontWeight(.heavy)
                 .listRowSeparator(.hidden)
-
+            
             ForEach(isSorted ? listViewModel.sortedItems : listViewModel.items) { item in
                 ListRowView(item: item)
                     .listRowSeparator(.hidden)
-                    .listRowBackground(RoundedRectangle(cornerRadius: 10)
-                                       //                        .foregroundStyle(item.dueDateSet ? NotificationManagerViewModel.instance.dueDateColor(date: item.dueDate) : Color.defaultItem)
-                        .foregroundStyle(Color.defaultItem)
-                        .addBorder(item.dueDateSet ? NotificationManagerViewModel.instance.dueDateColor(date: item.dueDate) : Color.primary, width: 3, cornerRadius: 10)
-                        .padding(.horizontal)
-                    )
                     .onTapGesture {
                         withAnimation(.linear) {
                             listViewModel.updateItem(item: item)
@@ -141,9 +131,9 @@ extension ListView {
             .onMove(perform: listViewModel.moveItem)
         }
         .scrollIndicators(ScrollIndicatorVisibility.hidden)
-        //.shadow(color: shadowColor, radius: shadowRadius, x: shadowX, y: shadowY)
         .listStyle(.plain)
-        .listRowSpacing(15.0)    }
+        //.listRowSpacing(5.0)
+    }
     
     private var menuItems: some View {
         Menu {
@@ -160,9 +150,7 @@ extension ListView {
                         isSorted = true
                     }
                     listViewModel.sortList(selection: newValue.rawValue)
-                    
                 }
-                
             }
             NavigationLink("Settings") { SettingsView() }
         } label: {
