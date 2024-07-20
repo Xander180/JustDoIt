@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct ListRowView: View {
-    @EnvironmentObject var listViewModel: ListViewModel
-    let item: ItemModel
+    let item: ItemEntity
     
     
     var dateFormatter: DateFormatter {
@@ -22,7 +21,7 @@ struct ListRowView: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                Text(item.title)
+                Text(item.title ?? "NO TITLE")
                 Spacer()
                 Image(systemName: item.isCompleted ? "checkmark.circle.fill" : "circle")
                     .font(.largeTitle)
@@ -37,14 +36,14 @@ struct ListRowView: View {
             .background(Color.black.opacity(0.001))
             
             
-            if item.dueDateSet {
+            if item.dateDueSet {
                 HStack {
-                    Text(dateFormatter.string(from: item.dueDate))
+                    Text(dateFormatter.string(from: item.dateDue ?? Date.now))
                         .padding(.leading, 20)
                         .foregroundStyle(.secondary)
                         .font(.subheadline)
                     
-                    Text(NotificationManagerViewModel.instance.checkDueDate(date: item.dueDate))
+                    Text(NotificationManager.instance.checkDueDate(date: item.dateDue ?? Date.now))
                         .fontWeight(.bold)
                 }
             }
@@ -52,17 +51,13 @@ struct ListRowView: View {
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 5)
         .padding(.bottom, 10)
-        .background(item.dueDateSet ? NotificationManagerViewModel.instance.dueDateColor(date: item.dueDate) : Color.defaultItem)
+        .background(item.dateDueSet ? NotificationManager.instance.dueDateColor(date: item.dateDue ?? Date.now) : Color.defaultItem)
         .clipShape(RoundedRectangle(cornerRadius: 10))
-        .addBorder(item.dueDateSet ? NotificationManagerViewModel.instance.dueDateColor(date: item.dueDate) : Color.primary, width: 1, cornerRadius: 10)
+        .addBorder(item.dateDueSet ? NotificationManager.instance.dueDateColor(date: item.dateDue ?? Date.now) : Color.primary, width: 1, cornerRadius: 10)
         
     }
 }
 
-#Preview(traits: .sizeThatFitsLayout) {
-    Group {
-        ListRowView(item: ItemModel(title: "This is the first item", createdDate: Date.now, dueDate: Date.now, dueDateSet: false, isCompleted: false))
-        ListRowView(item: ItemModel(title: "This is the second item", createdDate: Date.now, dueDate: Date.now, dueDateSet: true, isCompleted: true))
-    }
-    .environmentObject(ListViewModel())
-}
+//#Preview(traits: .sizeThatFitsLayout) {
+//    ListRowView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+//}

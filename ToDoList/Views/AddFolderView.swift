@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AddFolderView: View {
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var listViewModel: ListViewModel
+    @ObservedObject var vm: CoreDataRelationshipViewModel
     
     @State private var folderIcon = "pencil"
     @State private var folderTitle = ""
@@ -48,7 +48,7 @@ struct AddFolderView: View {
     
     func saveButtonPressed() {
         if textIsNotEmpty() {
-            listViewModel.addFolder(icon: folderIcon, title: folderTitle)
+            vm.addFolder(icon: folderIcon, title: folderTitle)
             
             dismiss.callAsFunction()
         }
@@ -65,9 +65,9 @@ struct AddFolderView: View {
 }
 
 
-#Preview {
-    NavigationStack {
-        AddFolderView()
-    }
-    .environmentObject(ListViewModel())
-}
+//#Preview {
+//    NavigationStack {
+//        AddFolderView()
+//    }
+//    .environmentObject(ListViewModel())
+//}

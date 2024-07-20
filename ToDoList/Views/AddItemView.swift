@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AddItemView: View {
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var listViewModel: ListViewModel
+    @ObservedObject var vm: CoreDataRelationshipViewModel
     
     @State private var showDueDate = false
     @State private var scheduleNotification = false
@@ -45,7 +45,7 @@ struct AddItemView: View {
                         
                         Toggle("Set Reminder", isOn: $scheduleNotification)
                             .onChange(of: scheduleNotification) { oldValue, newValue in
-                                NotificationManagerViewModel.instance.requestAuthorization()
+                                NotificationManager.instance.requestAuthorization()
                             }
                     }
                 }
@@ -53,6 +53,9 @@ struct AddItemView: View {
             .padding(14)
         }
         .navigationTitle("Add an Item 🖊️")
+        .onChange(of: vm.items) { oldValue, newValue in
+            vm.getItems()
+        }
         
         Button(action: saveButtonPressed,
                label: {
@@ -72,9 +75,9 @@ struct AddItemView: View {
     
     func saveButtonPressed() {
         if textIsNotEmpty() {
-            listViewModel.addItem(title: taskTitle, dueDate: dueDate, dueDateSet: showDueDate)
+            vm.addItem(title: taskTitle, dateDue: dueDate, dateDueSet: showDueDate)
             if scheduleNotification {
-                NotificationManagerViewModel.instance.scheduleNotification(subtitle: taskTitle ,date: dueDate)
+                NotificationManager.instance.scheduleNotification(subtitle: taskTitle ,date: dueDate)
             }
             dismiss.callAsFunction()
         }
@@ -90,9 +93,9 @@ struct AddItemView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        AddItemView()
-    }
-    .environmentObject(ListViewModel())
-}
+//#Preview {
+//    NavigationStack {
+//        AddItemView()
+//    }
+//    .environmentObject(ListViewModel())
+//}

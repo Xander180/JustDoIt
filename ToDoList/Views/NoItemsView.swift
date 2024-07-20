@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct NoItemsView: View {
+    @ObservedObject var vm: CoreDataRelationshipViewModel
     @State var animate = false
     let secondaryAccentColor = Color("SecondaryAccentColor")
     
@@ -21,7 +22,7 @@ struct NoItemsView: View {
                 
                 
                 NavigationLink("Add Something") {
-                    AddItemView()
+                    AddItemView(vm: vm)
                 }
                 .foregroundStyle(Color.white)
                 .font(.headline)
@@ -56,9 +57,9 @@ struct NoItemsView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        NoItemsView()
-    }
-    .navigationTitle("Title")
-}
+//#Preview {
+//    NavigationStack {
+//        NoItemsView()
+//    }
+//    .navigationTitle("Title")
+//}

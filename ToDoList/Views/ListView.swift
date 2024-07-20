@@ -9,16 +9,13 @@ import SwiftUI
 
 struct ListView: View {
     @EnvironmentObject var listViewModel: ListViewModel
+    @StateObject var vm = CoreDataRelationshipViewModel()
     @State private var showAlert = false
     @State private var folderName = ""
     @State private var folderIcon = "pencil"
     @State private var isSorted = false
     @State private var selection = sortByOptions.original
     
-    let shadowColor: Color = .primary
-    let shadowRadius: CGFloat = 10
-    let shadowX: CGFloat = -7
-    let shadowY: CGFloat = 7
     
     let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 6, alignment: nil),
@@ -34,25 +31,17 @@ struct ListView: View {
     }
     
     var body: some View {
-        ZStack {
+        NavigationStack {
             VStack {
                 itemsView
-                if listViewModel.items.isEmpty && listViewModel.folders.isEmpty {
-                    NoItemsView()
+                if vm.items.isEmpty {
+                    NoItemsView(vm: vm)
                         .transition(AnyTransition.opacity.animation(.easeIn))
                 }
             }
+            .navigationTitle("Just Do It! 📝")
+            .toolbar { toolbarContent() }
         }
-        .navigationTitle("Just Do It! 📝")
-        .toolbar { toolbarContent() }
-        .onAppear {
-            UNUserNotificationCenter.current().setBadgeCount(0)
-            listViewModel.getData()
-        }
-        .onChange(of: listViewModel.items) { oldValue, newValue in
-            listViewModel.sortList(selection: selection.rawValue)
-        }
-        
     }
 }
 
@@ -70,8 +59,8 @@ extension ListView {
         ToolbarItem(placement: .topBarTrailing) { menuItems }
         ToolbarItem(placement: .bottomBar) {
             HStack {
-                if !listViewModel.items.isEmpty {
-                    NavigationLink(destination: AddItemView()) {
+                if !vm.items.isEmpty {
+                    NavigationLink(destination: AddItemView(vm: vm)) {
                         
                         HStack {
                             Image(systemName: "plus.circle.fill")
@@ -84,7 +73,7 @@ extension ListView {
                 
                 Spacer()
                 
-                NavigationLink(destination: AddFolderView()) {
+                NavigationLink(destination: AddFolderView(vm: vm)) {
                     Text("New Folder")
                         .font(.title3)
                         .foregroundStyle(.accent)
@@ -96,43 +85,34 @@ extension ListView {
     private var itemsView: some View {
         List {
             LazyVGrid(columns: columns) {
-                ForEach(listViewModel.defaultFolders) { folder in
+                ForEach(vm.folders) { folder in
                     FolderGridView(folder: folder)
                         .listRowSeparator(.hidden)
                         .foregroundStyle(Color.defaultItem)
                 }
-                ForEach(listViewModel.folders) { folder in
-                    FolderGridView(folder: folder)
-                        .listRowSeparator(.hidden)
-                        .foregroundStyle(Color.defaultItem)
-                }
-                .onDelete(perform: listViewModel.deleteFolder)
-                .onMove(perform: listViewModel.moveFolder)
-            }
-            .onAppear {
-                print(listViewModel.folders)
+//                .onDelete(perform: listViewModel.deleteFolder)
+//                .onMove(perform: listViewModel.moveFolder)
             }
             
-            Text(listViewModel.items.isEmpty ? "" : "All")
+            Text(vm.items.isEmpty ? "" : "All")
                 .font(.largeTitle)
                 .fontWeight(.heavy)
                 .listRowSeparator(.hidden)
             
-            ForEach(isSorted ? listViewModel.sortedItems : listViewModel.items) { item in
+            ForEach(vm.items) { item in
                 ListRowView(item: item)
                     .listRowSeparator(.hidden)
-                    .onTapGesture {
-                        withAnimation(.linear) {
-                            listViewModel.updateItem(item: item)
-                        }
-                    }
+//                    .onTapGesture {
+//                        withAnimation(.linear) {
+//                            listViewModel.updateItem(item: item)
+//                        }
+//                    }
             }
-            .onDelete(perform: listViewModel.deleteItem)
-            .onMove(perform: listViewModel.moveItem)
+//            .onDelete(perform: listViewModel.deleteItem)
+//            .onMove(perform: listViewModel.moveItem)
         }
         .scrollIndicators(ScrollIndicatorVisibility.hidden)
         .listStyle(.plain)
-        //.listRowSpacing(5.0)
     }
     
     private var menuItems: some View {

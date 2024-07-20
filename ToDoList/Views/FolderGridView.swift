@@ -8,13 +8,12 @@
 import SwiftUI
 
 struct FolderGridView: View {
-    @EnvironmentObject var listViewModel: ListViewModel
-    let folder: FolderModel
+    let folder: FolderEntity
     
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                Image(systemName: folder.icon)
+                Image(systemName: folder.icon ?? "")
                 
                 Spacer()
                 
@@ -24,7 +23,7 @@ struct FolderGridView: View {
             .font(.largeTitle)
             .padding(.bottom)
             
-            Text(folder.title)
+            Text(folder.title ?? "No Title")
                 .font(.title)
         }
         .padding(7)
@@ -33,6 +32,6 @@ struct FolderGridView: View {
     }
 }
 
-#Preview(traits: .sizeThatFitsLayout) {
-    FolderGridView(folder: FolderModel(icon: "sun.max.circle.fill",title: "Folder 1"))
-}
+//#Preview(traits: .sizeThatFitsLayout) {
+//    FolderGridView(folder: FolderModel(icon: "sun.max.circle.fill",title: "Folder 1"))
+//}

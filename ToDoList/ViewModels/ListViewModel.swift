@@ -43,7 +43,7 @@ class ListViewModel: ObservableObject {
     
     init() {
         getData()
-        NotificationManagerViewModel.instance.getPendingNotifications()
+        NotificationManager.instance.getPendingNotifications()
     }
     
     // CREATE
