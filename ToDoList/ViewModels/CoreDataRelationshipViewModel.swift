@@ -13,11 +13,13 @@ class CoreDataRelationshipViewModel: ObservableObject {
     let manager = ToDoListManager.instance
     @AppStorage("first_boot") var firstBoot = true
     @Published var items: [ItemEntity] = []
+    @Published var sortedItems: [ItemEntity] = []
     @Published var folders: [FolderEntity] = []
     
     init() {
         if firstBoot {
             addDefaultFolders()
+            sortedItems = items
         }
         getItems()
         getFolders()
@@ -53,7 +55,29 @@ class CoreDataRelationshipViewModel: ObservableObject {
         newItem.dateDue = dateDue
         newItem.dateDueSet = dateDueSet
         newItem.isCompleted = false
+        newItem.addToFolders(folders[1])
         
+        
+        
+        saveData()
+    }
+    
+    func updateItem(item: ItemEntity) {
+        item.isCompleted.toggle()
+        
+        if let folderIndex = folders.firstIndex(where: { $0.title == "Completed" }) {
+            if item.isCompleted {
+                folders[folderIndex].addToItems(item)
+            } else {
+                folders[folderIndex].removeFromItems(item)
+            }
+        }
+        
+        if item.isCompleted {
+            items.removeAll(where: {$0.id == item.id} )
+        } else {
+            items.append(item)
+        }
         
         saveData()
     }
@@ -63,11 +87,9 @@ class CoreDataRelationshipViewModel: ObservableObject {
         let allFolder = FolderEntity(context: manager.context)
         completedFolder.icon = "checkmark.seal.fill"
         completedFolder.title = "Completed"
-        completedFolder.itemCount = 0
         
         allFolder.icon = "tray.circle.fill"
         allFolder.title = "All"
-        allFolder.itemCount = 0
         
         firstBoot = false
         
@@ -78,8 +100,44 @@ class CoreDataRelationshipViewModel: ObservableObject {
         let newFolder = FolderEntity(context: manager.context)
         newFolder.icon = icon
         newFolder.title = title
-        newFolder.itemCount = 0
         
+        saveData()
+    }
+    
+    func deleteItem(indexSet: IndexSet) {
+        let index = indexSet[indexSet.startIndex]
+        manager.context.delete(items[index])
+        saveData()
+    }
+    
+    func deleteFolder(indexSet: IndexSet) {
+        let index = indexSet[indexSet.startIndex]
+        manager.context.delete(folders[index])
+        saveData()
+    }
+    
+    func moveItem(from: IndexSet, to: Int) {
+        items.move(fromOffsets: from, toOffset: to)
+        saveData()
+    }
+    
+    func moveFolder(from: IndexSet, to: Int) {
+        folders.move(fromOffsets: from, toOffset: to)
+        saveData()
+    }
+    
+    func sortItems(selection: String){
+        _ = NSFetchRequest<ItemEntity>(entityName: "ItemEntity")
+        
+        switch selection {
+        case "Alphabetical":
+            sortedItems = items.sorted(by: { $0.title! < $1.title! })
+        case "Date":
+            sortedItems = items.sorted(by: { $0.dateCreated ?? Date() > $1.dateCreated ?? Date()} )
+        default:
+            sortedItems = items
+        }
+
         saveData()
     }
     
@@ -87,7 +145,7 @@ class CoreDataRelationshipViewModel: ObservableObject {
         items.removeAll()
         folders.removeAll()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        DispatchQueue.main.asyncAfter(deadline: .now()) {
             self.manager.saveData()
             self.getItems()
             self.getFolders()

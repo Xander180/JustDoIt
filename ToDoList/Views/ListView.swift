@@ -8,13 +8,12 @@
 import SwiftUI
 
 struct ListView: View {
-    @EnvironmentObject var listViewModel: ListViewModel
     @StateObject var vm = CoreDataRelationshipViewModel()
     @State private var showAlert = false
     @State private var folderName = ""
     @State private var folderIcon = "pencil"
-    @State private var isSorted = false
-    @State private var selection = sortByOptions.original
+    @AppStorage("is_sorted") private var isSorted = false
+    @AppStorage("sort_by") private var selection = sortByOptions.original
     
     
     let columns: [GridItem] = [
@@ -34,7 +33,7 @@ struct ListView: View {
         NavigationStack {
             VStack {
                 itemsView
-                if vm.items.isEmpty {
+                if allItemsCompleted() {
                     NoItemsView(vm: vm)
                         .transition(AnyTransition.opacity.animation(.easeIn))
                 }
@@ -42,6 +41,16 @@ struct ListView: View {
             .navigationTitle("Just Do It! 📝")
             .toolbar { toolbarContent() }
         }
+    }
+    
+    func allItemsCompleted() -> Bool {
+        for item in vm.items {
+            if !item.isCompleted {
+                return false
+            }
+        }
+        
+        return true
     }
 }
 
@@ -59,9 +68,8 @@ extension ListView {
         ToolbarItem(placement: .topBarTrailing) { menuItems }
         ToolbarItem(placement: .bottomBar) {
             HStack {
-                if !vm.items.isEmpty {
+                if !allItemsCompleted() {
                     NavigationLink(destination: AddItemView(vm: vm)) {
-                        
                         HStack {
                             Image(systemName: "plus.circle.fill")
                             Text("New Task")
@@ -84,32 +92,59 @@ extension ListView {
     
     private var itemsView: some View {
         List {
+            @State var items = vm.items
             LazyVGrid(columns: columns) {
                 ForEach(vm.folders) { folder in
                     FolderGridView(folder: folder)
                         .listRowSeparator(.hidden)
                         .foregroundStyle(Color.defaultItem)
                 }
-//                .onDelete(perform: listViewModel.deleteFolder)
+                .onDelete(perform: vm.deleteFolder)
 //                .onMove(perform: listViewModel.moveFolder)
             }
             
-            Text(vm.items.isEmpty ? "" : "All")
-                .font(.largeTitle)
-                .fontWeight(.heavy)
+            HStack {
+                Text("All")
+                    .font(.title)
+                    .fontWeight(.heavy)
                 .listRowSeparator(.hidden)
-            
-            ForEach(vm.items) { item in
-                ListRowView(item: item)
-                    .listRowSeparator(.hidden)
-//                    .onTapGesture {
-//                        withAnimation(.linear) {
-//                            listViewModel.updateItem(item: item)
-//                        }
-//                    }
+                
+                Spacer()
+                
+                Menu("Sort by: \(selection.rawValue)") {
+                    Picker("Menu", selection: $selection) {
+                        ForEach(sortByOptions.allCases, id: \.self) { option in
+                            Text(option.rawValue)
+                        }
+                    }
+                    .onChange(of: selection) { oldValue, newValue in
+                        if newValue == .original {
+                            isSorted = false
+                        } else {
+                            isSorted = true
+                        }
+                        vm.sortItems(selection: newValue.rawValue)
+                    }
+                }
             }
-//            .onDelete(perform: listViewModel.deleteItem)
-//            .onMove(perform: listViewModel.moveItem)
+            .listRowSeparator(.hidden)
+            
+            ForEach(isSorted ? vm.sortedItems : vm.items) { item in
+                if !item.isCompleted {
+                    ListRowView(item: item)
+                        .listRowSeparator(.hidden)
+                        .onTapGesture {
+                            withAnimation(.linear) {
+                                vm.updateItem(item: item)
+                            }
+                        }
+                }
+            }
+            .onDelete(perform: vm.deleteItem)
+//            .onMove(perform: vm.moveItem)
+        }
+        .onAppear {
+            vm.sortItems(selection: selection.rawValue)
         }
         .scrollIndicators(ScrollIndicatorVisibility.hidden)
         .listStyle(.plain)
@@ -117,21 +152,6 @@ extension ListView {
     
     private var menuItems: some View {
         Menu {
-            Menu("Sort by") {
-                Picker("Menu", selection: $selection) {
-                    ForEach(sortByOptions.allCases, id: \.self) { option in
-                        Text(option.rawValue)
-                    }
-                }
-                .onChange(of: selection) { oldValue, newValue in
-                    if newValue == .original {
-                        isSorted = false
-                    } else {
-                        isSorted = true
-                    }
-                    listViewModel.sortList(selection: newValue.rawValue)
-                }
-            }
             NavigationLink("Settings") { SettingsView() }
         } label: {
             Image(systemName: "line.3.horizontal")

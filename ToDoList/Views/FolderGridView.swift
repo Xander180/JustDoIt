@@ -13,11 +13,11 @@ struct FolderGridView: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                Image(systemName: folder.icon ?? "")
+                Image(systemName: folder.icon ?? "pencil")
                 
                 Spacer()
                 
-                Text("\(folder.itemCount)")
+                Text("\(folder.items?.count ?? 0)")
                     .fontWeight(.heavy)
             }
             .font(.largeTitle)
