@@ -57,9 +57,7 @@ class CoreDataRelationshipViewModel: ObservableObject {
         newItem.dateDueSet = dateDueSet
         newItem.isCompleted = false
         newItem.addToFolders(folders[index])
-        
-        
-        
+
         saveData()
     }
     
@@ -86,7 +84,7 @@ class CoreDataRelationshipViewModel: ObservableObject {
     func addDefaultFolders() {
         let completedFolder = FolderEntity(context: manager.context)
         let allFolder = FolderEntity(context: manager.context)
-        completedFolder.icon = "checkmark.seal.fill"
+        completedFolder.icon = "checkmark.circle.fill"
         completedFolder.title = "Completed"
         
         allFolder.icon = "tray.circle.fill"
@@ -171,7 +169,7 @@ class CoreDataRelationshipViewModel: ObservableObject {
         items.removeAll()
         folders.removeAll()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             self.manager.saveData()
             self.getItems()
             self.getFolders()

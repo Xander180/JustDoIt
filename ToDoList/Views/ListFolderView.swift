@@ -18,12 +18,13 @@ struct ListFolderView: View {
                 
                 Spacer()
                 
-                Text("\(folder.items?.count ?? 0)")
-                    .fontWeight(.heavy)
+//                Text("\(folder.items?.count ?? 0)")
+//                    .fontWeight(.heavy)
             }
-            .onChange(of: folder.items?.count, { oldValue, newValue in
-                itemCount = folder.items?.count ?? 0
-            })
+//            .onChange(of: folder.items?.count, { oldValue, newValue in
+//                itemCount = folder.items?.count ?? 0
+//                
+//            })
             .font(.largeTitle)
             .padding(.bottom)
             
@@ -36,6 +37,6 @@ struct ListFolderView: View {
     }
 }
 
-#Preview(traits: .sizeThatFitsLayout) {
-    ListFolderView(folder: FolderEntity(context: ToDoListManager.instance.context))
-}
+//#Preview(traits: .sizeThatFitsLayout) {
+//    ListFolderView(folder: FolderEntity(context: ToDoListManager.instance.context))
+//}

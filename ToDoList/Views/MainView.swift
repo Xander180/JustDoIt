@@ -52,7 +52,6 @@ struct MainView: View {
     NavigationStack {
         MainView()
     }
-    .environmentObject(ListViewModel())
 }
 
 extension MainView {

@@ -11,20 +11,36 @@ struct AddFolderView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var vm: CoreDataRelationshipViewModel
     
-    @State private var folderIcon = "pencil"
+    @State private var folderIcon = "pencil.circle.fill"
+    @State private var folderIconColor = Color.blue
     @State private var folderTitle = ""
     
     @State private var alertTitle = ""
     @State private var showAlert = false
     
+    let columns: [GridItem] = [
+        GridItem(.flexible(), spacing: 6, alignment: nil),
+        GridItem(.flexible(), spacing: 6, alignment: nil),
+        GridItem(.flexible(), spacing: 6, alignment: nil),
+        GridItem(.flexible(), spacing: 6, alignment: nil),
+        GridItem(.flexible(), spacing: 6, alignment: nil),
+        GridItem(.flexible(), spacing: 6, alignment: nil)
+    ]
+    
     var body: some View {
         ScrollView {
-            VStack {
-                TextField("Type something here...", text: $folderTitle)
+            VStack(spacing: 20) {
+                Image(systemName: folderIcon)
+                    .resizable()
+                    .frame(width: 100, height: 100, alignment: .center)
+                    .foregroundStyle(folderIconColor)
+                TextField("Folder name", text: $folderTitle)
                     .padding(.horizontal)
                     .frame(height: 55)
                     .background(Color(UIColor.secondarySystemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 10))
+                
+                RectangularColorPickerView(colorValue: $folderIconColor)
             }
             .padding(14)
         }
@@ -65,9 +81,8 @@ struct AddFolderView: View {
 }
 
 
-//#Preview {
-//    NavigationStack {
-//        AddFolderView()
-//    }
-//    .environmentObject(ListViewModel())
-//}
+#Preview {
+    NavigationStack {
+        AddFolderView(vm: CoreDataRelationshipViewModel())
+    }
+}
