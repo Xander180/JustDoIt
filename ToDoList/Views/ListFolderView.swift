@@ -7,8 +7,9 @@
 
 import SwiftUI
 
-struct FolderGridView: View {
+struct ListFolderView: View {
     let folder: FolderEntity
+    @State var itemCount = 0
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -20,6 +21,9 @@ struct FolderGridView: View {
                 Text("\(folder.items?.count ?? 0)")
                     .fontWeight(.heavy)
             }
+            .onChange(of: folder.items?.count, { oldValue, newValue in
+                itemCount = folder.items?.count ?? 0
+            })
             .font(.largeTitle)
             .padding(.bottom)
             
@@ -32,6 +36,6 @@ struct FolderGridView: View {
     }
 }
 
-//#Preview(traits: .sizeThatFitsLayout) {
-//    FolderGridView(folder: FolderModel(icon: "sun.max.circle.fill",title: "Folder 1"))
-//}
+#Preview(traits: .sizeThatFitsLayout) {
+    ListFolderView(folder: FolderEntity(context: ToDoListManager.instance.context))
+}

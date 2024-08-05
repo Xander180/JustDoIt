@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ListRowView: View {
+struct ListItemView: View {
     let item: ItemEntity
     
     

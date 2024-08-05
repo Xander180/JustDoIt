@@ -50,12 +50,13 @@ class CoreDataRelationshipViewModel: ObservableObject {
     
     func addItem(title: String, dateDue: Date, dateDueSet: Bool) {
         let newItem = ItemEntity(context: manager.context)
+        guard let index = folders.firstIndex(where: { $0.title == "All" }) else { return }
         newItem.title = title
         newItem.dateCreated = Date.now
         newItem.dateDue = dateDue
         newItem.dateDueSet = dateDueSet
         newItem.isCompleted = false
-        newItem.addToFolders(folders[1])
+        newItem.addToFolders(folders[index])
         
         
         
@@ -116,6 +117,31 @@ class CoreDataRelationshipViewModel: ObservableObject {
         saveData()
     }
     
+    func deleteAll() {
+        var fetchRequest: NSFetchRequest<NSFetchRequestResult>
+        var deleteRequest: NSBatchDeleteRequest
+        
+        do {
+            fetchRequest = NSFetchRequest(entityName: "ItemEntity")
+            deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+            
+            try manager.context.execute(deleteRequest)
+        } catch let error as NSError {
+            print("Items could not be deleted. \(error.localizedDescription)")
+        }
+        
+//        do {
+//            fetchRequest = NSFetchRequest(entityName: "FolderEntity")
+//            deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+//            
+//            try manager.context.execute(deleteRequest)
+//        } catch let error as NSError {
+//            print("Folders could not be deleted")
+//        }
+        
+        saveData()
+    }
+    
     func moveItem(from: IndexSet, to: Int) {
         items.move(fromOffsets: from, toOffset: to)
         saveData()
@@ -145,7 +171,7 @@ class CoreDataRelationshipViewModel: ObservableObject {
         items.removeAll()
         folders.removeAll()
         
-        DispatchQueue.main.asyncAfter(deadline: .now()) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             self.manager.saveData()
             self.getItems()
             self.getFolders()

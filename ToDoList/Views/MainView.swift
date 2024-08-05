@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-struct ListView: View {
+struct MainView: View {
     @StateObject var vm = CoreDataRelationshipViewModel()
     @State private var showAlert = false
     @State private var folderName = ""
     @State private var folderIcon = "pencil"
     @AppStorage("is_sorted") private var isSorted = false
-    @AppStorage("sort_by") private var selection = sortByOptions.original
+    @AppStorage("sort_by") private var selection = ItemSortModel.Options.original
     
     
     let columns: [GridItem] = [
@@ -21,17 +21,10 @@ struct ListView: View {
         GridItem(.flexible(), spacing: 6, alignment: nil),
     ]
     
-    enum sortByOptions: String, CaseIterable, Identifiable {
-        case original = "Default",
-             alphabetical = "Alphabetical",
-             date = "Date"
-        
-        var id: Self { self }
-    }
-    
     var body: some View {
         NavigationStack {
             VStack {
+                foldersView
                 itemsView
                 if allItemsCompleted() {
                     NoItemsView(vm: vm)
@@ -57,12 +50,12 @@ struct ListView: View {
 
 #Preview {
     NavigationStack {
-        ListView()
+        MainView()
     }
     .environmentObject(ListViewModel())
 }
 
-extension ListView {
+extension MainView {
     @ToolbarContentBuilder
     func toolbarContent() -> some ToolbarContent {
         ToolbarItem(placement: .topBarTrailing) { menuItems }
@@ -90,19 +83,23 @@ extension ListView {
         }
     }
     
-    private var itemsView: some View {
-        List {
-            @State var items = vm.items
-            LazyVGrid(columns: columns) {
-                ForEach(vm.folders) { folder in
-                    FolderGridView(folder: folder)
+    private var foldersView: some View {
+        LazyVGrid(columns: columns) {
+            ForEach(vm.folders) { folder in
+                NavigationLink(destination: FolderView(vm: vm, folder: folder)) {
+                    ListFolderView(folder: folder)
                         .listRowSeparator(.hidden)
                         .foregroundStyle(Color.defaultItem)
                 }
-                .onDelete(perform: vm.deleteFolder)
-//                .onMove(perform: listViewModel.moveFolder)
             }
-            
+            //                .onDelete(perform: vm.deleteFolder)
+            //                .onMove(perform: listViewModel.moveFolder)
+        }
+        .padding(.horizontal)
+    }
+    
+    private var itemsView: some View {
+        List {
             HStack {
                 Text("All")
                     .font(.title)
@@ -113,7 +110,7 @@ extension ListView {
                 
                 Menu("Sort by: \(selection.rawValue)") {
                     Picker("Menu", selection: $selection) {
-                        ForEach(sortByOptions.allCases, id: \.self) { option in
+                        ForEach(ItemSortModel.Options.allCases, id: \.self) { option in
                             Text(option.rawValue)
                         }
                     }
@@ -131,7 +128,7 @@ extension ListView {
             
             ForEach(isSorted ? vm.sortedItems : vm.items) { item in
                 if !item.isCompleted {
-                    ListRowView(item: item)
+                    ListItemView(item: item)
                         .listRowSeparator(.hidden)
                         .onTapGesture {
                             withAnimation(.linear) {
@@ -152,7 +149,7 @@ extension ListView {
     
     private var menuItems: some View {
         Menu {
-            NavigationLink("Settings") { SettingsView() }
+            NavigationLink("Settings") { SettingsView(vm: vm) }
         } label: {
             Image(systemName: "line.3.horizontal")
         }
