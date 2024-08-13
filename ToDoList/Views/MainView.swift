@@ -146,6 +146,19 @@ extension MainView {
                         .onDelete {
                             vm.deleteItem(item: item)
                         }
+                        .contextMenu {
+                            Button("Mark Completed") {
+                                vm.updateItem(item: item)
+                            }
+                            
+                            Button("Edit") {
+                                
+                            }
+                            
+                            Button("Delete") {
+                                vm.deleteItem(item: item)
+                            }
+                        }
                 }
             }
 //            .onMove(perform: vm.moveItem)
