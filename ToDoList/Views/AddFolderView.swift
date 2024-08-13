@@ -19,7 +19,7 @@ struct AddFolderView: View {
     @State private var showAlert = false
     
     private let folderIcons: [String] = [
-        "pencil", "archivebox", "mappin", "phone", "bookmark", "iphone.gen2"]
+        "pencil", "scribble.variable", "archivebox.fill", "bookmark.fill", "book.fill", "mappin", "house.fill", "building.fill", "phone.fill", "display", "iphone.gen2", "gamecontroller.fill", "lock.doc.fill", "exclamationmark.triangle.fill", "shield.lefthalf.filled", "heart.fill", "stethoscope", "cross.case.fill", "sun.max.fill", "moon.fill", "flame.fill", "bolt.fill", "dog.fill", "cat.fill", "lizard", "fish", "leaf.fill", "camera.macro", "tree.fill", "dumbbell.fill", "soccerball", "basketball.fill", "baseball.fill", "football.fill", "tennis.racket", "cart.fill", "basket.fill", "dollarsign", "creditcard.fill", "compass.drawing","lightbulb.fill", "message.fill", "circle.fill", "square.fill", "triangle.fill", "diamond.fill", "star.fill"]
     
     let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 6, alignment: nil),
@@ -54,7 +54,7 @@ struct AddFolderView: View {
                             .font(.title)
                             .padding()
                             .clipShape(Circle())
-                            .overlay(Circle().strokeBorder(.black))
+                            .overlay(Circle().strokeBorder(.black).frame(width: 50, height: 50))
                             .onTapGesture {
                                 folderIcon = icon
                             }
