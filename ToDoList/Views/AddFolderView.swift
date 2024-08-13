@@ -11,12 +11,15 @@ struct AddFolderView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var vm: CoreDataRelationshipViewModel
     
-    @State private var folderIcon = "pencil.circle.fill"
-    @State private var folderIconColor = Color.blue
+    @State private var folderIcon = "pencil"
+    @State private var folderIconColor: Color = .blue
     @State private var folderTitle = ""
     
     @State private var alertTitle = ""
     @State private var showAlert = false
+    
+    private let folderIcons: [String] = [
+        "pencil", "archivebox", "mappin", "phone", "bookmark", "iphone.gen2"]
     
     let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 6, alignment: nil),
@@ -32,8 +35,11 @@ struct AddFolderView: View {
             VStack(spacing: 20) {
                 Image(systemName: folderIcon)
                     .resizable()
+                    .scaledToFit()
                     .frame(width: 100, height: 100, alignment: .center)
-                    .foregroundStyle(folderIconColor)
+                    .foregroundStyle(.white)
+                    .padding()
+                    .background(Circle().foregroundStyle(folderIconColor))
                 TextField("Folder name", text: $folderTitle)
                     .padding(.horizontal)
                     .frame(height: 55)
@@ -41,6 +47,19 @@ struct AddFolderView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 
                 RectangularColorPickerView(colorValue: $folderIconColor)
+                
+                LazyVGrid(columns: columns) {
+                    ForEach(folderIcons, id: \.self) { icon in
+                        Image(systemName: icon)
+                            .font(.title)
+                            .padding()
+                            .clipShape(Circle())
+                            .overlay(Circle().strokeBorder(.black))
+                            .onTapGesture {
+                                folderIcon = icon
+                            }
+                    }
+                }
             }
             .padding(14)
         }
@@ -64,7 +83,10 @@ struct AddFolderView: View {
     
     func saveButtonPressed() {
         if textIsNotEmpty() {
-            vm.addFolder(icon: folderIcon, title: folderTitle)
+            let red = Double(folderIconColor.components.r)
+            let green = Double(folderIconColor.components.g)
+            let blue = Double(folderIconColor.components.b)
+            vm.addFolder(icon: folderIcon, title: folderTitle, r: red, g: green, b: blue)
             
             dismiss.callAsFunction()
         }

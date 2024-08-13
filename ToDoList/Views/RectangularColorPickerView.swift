@@ -17,7 +17,7 @@ struct RectangularColorPickerView: View {
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.white, style: StrokeStyle(lineWidth: 5)))
             .padding(10)
             .background(AngularGradient.init(gradient: Gradient(colors: [.red, .yellow, .green, .blue, .purple, .pink]), center: .center).clipShape(RoundedRectangle(cornerRadius: 20)))
-            .overlay(ColorPicker("", selection: $colorValue).labelsHidden().opacity(0.015).scaleEffect(CGSize(width: 7.5, height: 5.0)))
+            .overlay(ColorPicker("", selection: $colorValue, supportsOpacity: false).labelsHidden().opacity(0.015).scaleEffect(CGSize(width: 7.5, height: 5.0)))
             .background(Color.black.opacity(0.001))
     }
 }

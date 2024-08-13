@@ -10,8 +10,6 @@ import SwiftUI
 struct MainView: View {
     @StateObject var vm = CoreDataRelationshipViewModel()
     @State private var showAlert = false
-    @State private var folderName = ""
-    @State private var folderIcon = "pencil"
     @AppStorage("is_sorted") private var isSorted = false
     @AppStorage("sort_by") private var selection = ItemSortModel.Options.original
     
@@ -22,18 +20,20 @@ struct MainView: View {
     ]
     
     var body: some View {
-        NavigationStack {
-            VStack {
-                foldersView
-                itemsView
-                if allItemsCompleted() {
-                    NoItemsView(vm: vm)
-                        .transition(AnyTransition.opacity.animation(.easeIn))
+        ScrollView {
+                LazyVStack {
+                    foldersView
+                    itemsView
+                    if allItemsCompleted() {
+                        NoItemsView(vm: vm)
+                            .transition(AnyTransition.opacity.animation(.easeIn))
+                    }
                 }
-            }
-            .navigationTitle("Just Do It! 📝")
-            .toolbar { toolbarContent() }
+                .navigationTitle("Just Do It! 📝")
+                .toolbar { toolbarContent() }
         }
+        .scrollIndicators(ScrollIndicatorVisibility.hidden)
+        .listStyle(.plain)
     }
     
     func allItemsCompleted() -> Bool {
@@ -98,7 +98,7 @@ extension MainView {
     }
     
     private var itemsView: some View {
-        List {
+        VStack {
             HStack {
                 Text("All")
                     .font(.title)
@@ -134,16 +134,18 @@ extension MainView {
                                 vm.updateItem(item: item)
                             }
                         }
+                        .onDelete {
+                            vm.deleteItem(item: item)
+                        }
                 }
             }
-            .onDelete(perform: vm.deleteItem)
 //            .onMove(perform: vm.moveItem)
         }
         .onAppear {
             vm.sortItems(selection: selection.rawValue)
         }
-        .scrollIndicators(ScrollIndicatorVisibility.hidden)
-        .listStyle(.plain)
+        .padding()
+
     }
     
     private var menuItems: some View {

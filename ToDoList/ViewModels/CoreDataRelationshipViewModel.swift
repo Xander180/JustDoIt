@@ -50,13 +50,11 @@ class CoreDataRelationshipViewModel: ObservableObject {
     
     func addItem(title: String, dateDue: Date, dateDueSet: Bool) {
         let newItem = ItemEntity(context: manager.context)
-        guard let index = folders.firstIndex(where: { $0.title == "All" }) else { return }
         newItem.title = title
         newItem.dateCreated = Date.now
         newItem.dateDue = dateDue
         newItem.dateDueSet = dateDueSet
         newItem.isCompleted = false
-        newItem.addToFolders(folders[index])
 
         saveData()
     }
@@ -83,29 +81,38 @@ class CoreDataRelationshipViewModel: ObservableObject {
     
     func addDefaultFolders() {
         let completedFolder = FolderEntity(context: manager.context)
-        let allFolder = FolderEntity(context: manager.context)
-        completedFolder.icon = "checkmark.circle.fill"
+        completedFolder.icon = "checkmark"
         completedFolder.title = "Completed"
-        
-        allFolder.icon = "tray.circle.fill"
-        allFolder.title = "All"
+        completedFolder.iconColorR = 0
+        completedFolder.iconColorG = 0
+        completedFolder.iconColorB = 0
+        completedFolder.iconColorA = 1
         
         firstBoot = false
         
         saveData()
     }
     
-    func addFolder(icon: String, title: String) {
+    func addFolder(icon: String, title: String, r: Double, g: Double, b: Double, a: Double = 1) {
         let newFolder = FolderEntity(context: manager.context)
         newFolder.icon = icon
         newFolder.title = title
+        newFolder.iconColorR = r
+        newFolder.iconColorG = g
+        newFolder.iconColorB = b
+        newFolder.iconColorA = a
         
         saveData()
     }
     
-    func deleteItem(indexSet: IndexSet) {
-        let index = indexSet[indexSet.startIndex]
-        manager.context.delete(items[index])
+//    func deleteItem(indexSet: IndexSet) {
+//        let index = indexSet[indexSet.startIndex]
+//        manager.context.delete(items[index])
+//        saveData()
+//    }
+    
+    func deleteItem(item: ItemEntity) {
+        manager.context.delete(item)
         saveData()
     }
     
@@ -169,7 +176,7 @@ class CoreDataRelationshipViewModel: ObservableObject {
         items.removeAll()
         folders.removeAll()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             self.manager.saveData()
             self.getItems()
             self.getFolders()

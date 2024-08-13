@@ -24,8 +24,10 @@ struct FolderView: View {
                                     vm.updateItem(item: item)
                                 }
                             }
+                            .onDelete {
+                                vm.deleteItem(item: item)
+                            }
                 }
-                .onDelete(perform: vm.deleteItem)
                 //            .onMove(perform: vm.moveItem)
             }
             .onAppear {
