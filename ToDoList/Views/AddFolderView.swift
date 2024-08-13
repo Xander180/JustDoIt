@@ -19,7 +19,7 @@ struct AddFolderView: View {
     @State private var showAlert = false
     
     private let folderIcons: [String] = [
-        "pencil", "scribble.variable", "archivebox.fill", "bookmark.fill", "book.fill", "mappin", "house.fill", "building.fill", "phone.fill", "display", "iphone.gen2", "gamecontroller.fill", "lock.doc.fill", "exclamationmark.triangle.fill", "shield.lefthalf.filled", "heart.fill", "stethoscope", "cross.case.fill", "sun.max.fill", "moon.fill", "flame.fill", "bolt.fill", "dog.fill", "cat.fill", "lizard", "fish", "leaf.fill", "camera.macro", "tree.fill", "dumbbell.fill", "soccerball", "basketball.fill", "baseball.fill", "football.fill", "tennis.racket", "cart.fill", "basket.fill", "dollarsign", "creditcard.fill", "compass.drawing","lightbulb.fill", "message.fill", "circle.fill", "square.fill", "triangle.fill", "diamond.fill", "star.fill"]
+        "pencil", "scribble.variable", "archivebox.fill", "bookmark.fill", "book.fill", "mappin", "house.fill", "building.fill", "phone.fill", "display", "iphone.gen2", "gamecontroller.fill", "lock.doc.fill", "exclamationmark.triangle.fill", "shield.lefthalf.filled", "heart.fill", "stethoscope", "cross.case.fill", "sun.max.fill", "moon.fill", "flame.fill", "bolt.fill", "dog.fill", "cat.fill", "lizard.fill", "fish.fill", "leaf.fill", "camera.macro", "tree.fill", "dumbbell.fill", "soccerball", "basketball.fill", "baseball.fill", "football.fill", "tennis.racket", "cart.fill", "basket.fill", "dollarsign", "creditcard.fill", "compass.drawing","lightbulb.fill", "message.fill", "circle.fill", "square.fill", "triangle.fill", "diamond.fill", "star.fill"]
     
     let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 6, alignment: nil),
@@ -48,18 +48,7 @@ struct AddFolderView: View {
                 
                 RectangularColorPickerView(colorValue: $folderIconColor)
                 
-                LazyVGrid(columns: columns) {
-                    ForEach(folderIcons, id: \.self) { icon in
-                        Image(systemName: icon)
-                            .font(.title)
-                            .padding()
-                            .clipShape(Circle())
-                            .overlay(Circle().strokeBorder(.black).frame(width: 50, height: 50))
-                            .onTapGesture {
-                                folderIcon = icon
-                            }
-                    }
-                }
+                iconPickerView
             }
             .padding(14)
         }
@@ -106,5 +95,22 @@ struct AddFolderView: View {
 #Preview {
     NavigationStack {
         AddFolderView(vm: CoreDataRelationshipViewModel())
+    }
+}
+
+extension AddFolderView {
+    private var iconPickerView: some View {
+        LazyVGrid(columns: columns) {
+            ForEach(folderIcons, id: \.self) { icon in
+                Image(systemName: icon)
+                    .font(.title)
+                    .padding()
+                    .clipShape(Circle())
+                    .overlay(Circle().strokeBorder(.black).frame(width: 50, height: 50))
+                    .onTapGesture {
+                        folderIcon = icon
+                    }
+            }
+        }
     }
 }

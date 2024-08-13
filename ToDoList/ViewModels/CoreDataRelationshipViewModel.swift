@@ -116,9 +116,8 @@ class CoreDataRelationshipViewModel: ObservableObject {
         saveData()
     }
     
-    func deleteFolder(indexSet: IndexSet) {
-        let index = indexSet[indexSet.startIndex]
-        manager.context.delete(folders[index])
+    func deleteFolder(folder: FolderEntity) {
+        manager.context.delete(folder)
         saveData()
     }
     

@@ -90,7 +90,16 @@ extension MainView {
                         .listRowSeparator(.hidden)
                         .foregroundStyle(Color.defaultItem)
                 }
+                .contextMenu {
+                    Button("Edit Folder") {
+                        
+                    }
+                    Button("Delete Folder") {
+                        vm.deleteFolder(folder: folder)
+                    }
+                }
             }
+            
             //                .onDelete(perform: vm.deleteFolder)
             //                .onMove(perform: listViewModel.moveFolder)
         }
