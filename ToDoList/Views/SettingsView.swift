@@ -21,7 +21,7 @@ struct SettingsView: View {
         }
         .navigationTitle("Settings ⚙️")
         
-        Text("Build ver. 0.2.0")
+        Text("Alpha ver. 0.1.1 Build 3")
         
         Button("Delete All") {
             showAlert.toggle()
