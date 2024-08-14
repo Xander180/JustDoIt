@@ -27,6 +27,19 @@ struct FolderView: View {
                             .onDelete {
                                 vm.deleteItem(item: item)
                             }
+                            .contextMenu {
+                                Button("Mark Incomplete") {
+                                    vm.updateItem(item: item)
+                                }
+                                
+                                Button("Edit") {
+                                    
+                                }
+                                
+                                Button("Delete") {
+                                    vm.deleteItem(item: item)
+                                }
+                            }
                 }
                 //            .onMove(perform: vm.moveItem)
             }

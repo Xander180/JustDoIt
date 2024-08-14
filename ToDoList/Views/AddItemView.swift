@@ -17,19 +17,28 @@ struct AddItemView: View {
     @State private var dueDate: Date = Date.now
     
     @State private var taskTitle = ""
+    @State private var taskNote = ""
     
     @State private var alertTitle = ""
     @State private var showAlert = false
     
     
     var body: some View {
-        ScrollView {
-            VStack {
-                TextField("Type something here...", text: $taskTitle)
-                    .padding(.horizontal)
-                    .frame(height: 55)
-                    .background(Color(UIColor.secondarySystemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+        Form {
+                TextField("Task title", text: $taskTitle)
+//                    .padding(.horizontal)
+//                    .frame(height: 55)
+//                    .background(Color(UIColor.secondarySystemBackground))
+//                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                
+                TextField("Notes", text: $taskNote, axis: .vertical)
+                    .multilineTextAlignment(.leading)
+//                    .padding(.horizontal)
+//                    .frame(height: 55)
+//                    .frame(maxHeight: 200)
+//                    .background(Color(UIColor.secondarySystemBackground))
+//                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                
                 
                 VStack(spacing: 20) {
                     Toggle("Due Date", isOn: $showDueDate)
@@ -49,10 +58,10 @@ struct AddItemView: View {
                             }
                     }
                 }
-            }
-            .padding(14)
+
         }
         .navigationTitle("Add an Item 🖊️")
+        .listStyle(.plain)
         .onChange(of: vm.items) { oldValue, newValue in
             vm.getItems()
         }
@@ -75,7 +84,7 @@ struct AddItemView: View {
     
     func saveButtonPressed() {
         if textIsNotEmpty() {
-            vm.addItem(title: taskTitle, dateDue: dueDate, dateDueSet: showDueDate)
+            vm.addItem(title: taskTitle, note: taskNote, dateDue: dueDate, dateDueSet: showDueDate)
             if scheduleNotification {
                 NotificationManager.instance.scheduleNotification(subtitle: taskTitle ,date: dueDate)
             }
@@ -93,9 +102,8 @@ struct AddItemView: View {
     }
 }
 
-//#Preview {
-//    NavigationStack {
-//        AddItemView()
-//    }
-//    .environmentObject(ListViewModel())
-//}
+#Preview {
+    NavigationStack {
+        AddItemView(vm: CoreDataRelationshipViewModel())
+    }
+}
