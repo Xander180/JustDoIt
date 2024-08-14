@@ -14,6 +14,7 @@
         <attribute name="dateDue" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="dateDueSet" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isCompleted" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="note" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <relationship name="folders" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="FolderEntity" inverseName="items" inverseEntity="FolderEntity"/>
     </entity>

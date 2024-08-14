@@ -48,9 +48,10 @@ class CoreDataRelationshipViewModel: ObservableObject {
         }
     }
     
-    func addItem(title: String, dateDue: Date, dateDueSet: Bool) {
+    func addItem(title: String, note: String, dateDue: Date, dateDueSet: Bool) {
         let newItem = ItemEntity(context: manager.context)
         newItem.title = title
+        newItem.note = note
         newItem.dateCreated = Date.now
         newItem.dateDue = dateDue
         newItem.dateDueSet = dateDueSet
