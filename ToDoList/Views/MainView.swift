@@ -91,11 +91,13 @@ extension MainView {
                         .foregroundStyle(Color.defaultItem)
                 }
                 .contextMenu {
-                    Button("Edit Folder") {
-                        
-                    }
-                    Button("Delete Folder") {
-                        vm.deleteFolder(folder: folder)
+                    if folder != vm.folders[0] {
+                        Button("Edit Folder") {
+                            
+                        }
+                        Button("Delete Folder") {
+                            vm.deleteFolder(folder: folder)
+                        }
                     }
                 }
             }

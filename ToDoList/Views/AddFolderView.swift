@@ -71,7 +71,7 @@ struct AddFolderView: View {
     }
     
     func saveButtonPressed() {
-        if textIsNotEmpty() {
+        if textIsNotEmpty() && folderNotExisting() {
             let red = Double(folderIconColor.components.r)
             let green = Double(folderIconColor.components.g)
             let blue = Double(folderIconColor.components.b)
@@ -86,6 +86,17 @@ struct AddFolderView: View {
             alertTitle = "Text field must not be empty!"
             showAlert.toggle()
             return false
+        }
+        return true
+    }
+    
+    func folderNotExisting() -> Bool {
+        for folder in vm.folders {
+            if folderTitle == folder.title {
+                alertTitle = "Folder already exists!"
+                showAlert.toggle()
+                return false
+            }
         }
         return true
     }
