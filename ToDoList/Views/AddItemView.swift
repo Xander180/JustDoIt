@@ -61,9 +61,8 @@ struct AddItemView: View {
                 }
             
             Picker("Folder", selection: $addToFolder) {
-                let folders: [FolderEntity] = vm.folders
                 Text("None").tag(nil as FolderEntity?)
-                ForEach(folders, id: \.self) {
+                ForEach(vm.folders, id: \.self) {
                     if $0.title != "Completed" {
                         Text($0.title ?? "").tag(Optional($0))
                     }

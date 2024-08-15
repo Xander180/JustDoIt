@@ -58,7 +58,7 @@ class CoreDataRelationshipViewModel: ObservableObject {
         newItem.isCompleted = false
         
         if toFolder != nil {
-            newItem.addToFolders(toFolder!)
+            addToFolder(item: newItem, folder: toFolder!)
         }
 
         saveData()
@@ -80,6 +80,12 @@ class CoreDataRelationshipViewModel: ObservableObject {
         } else {
             items.append(item)
         }
+        
+        saveData()
+    }
+    
+    func addToFolder(item: ItemEntity, folder: FolderEntity) {
+        item.addToFolders(folder)
         
         saveData()
     }

@@ -10,6 +10,7 @@ import SwiftUI
 struct MainView: View {
     @StateObject var vm = CoreDataRelationshipViewModel()
     @State private var showAlert = false
+    @State var folderSelection: FolderEntity?
     @AppStorage("is_sorted") private var isSorted = false
     @AppStorage("sort_by") private var selection = ItemSortModel.Options.original
     
@@ -149,13 +150,22 @@ extension MainView {
                             vm.deleteItem(item: item)
                         }
                         .contextMenu {
+                            
                             Button("Mark Completed") {
                                 vm.updateItem(item: item)
                             }
                             
-                            Button("Add to Folder") {
-                                
+                            Picker("Add to Folder", selection: $folderSelection) {
+                                ForEach(vm.folders, id: \.self) { folder in
+                                    if folder.title != "Completed" && !folder.items!.contains(item) {
+                                        Text(folder.title ?? "").tag(Optional(folder))
+                                            .onTapGesture {
+                                                vm.addToFolder(item: item, folder: folder)
+                                            }
+                                    }
+                                }
                             }
+                            .pickerStyle(.navigationLink)
                             
                             Button("Edit") {
                                 
