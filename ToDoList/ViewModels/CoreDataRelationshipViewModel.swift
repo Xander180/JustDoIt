@@ -48,7 +48,7 @@ class CoreDataRelationshipViewModel: ObservableObject {
         }
     }
     
-    func addItem(title: String, note: String, dateDue: Date, dateDueSet: Bool) {
+    func addItem(title: String, note: String, dateDue: Date, dateDueSet: Bool, toFolder: FolderEntity?) {
         let newItem = ItemEntity(context: manager.context)
         newItem.title = title
         newItem.note = note
@@ -56,6 +56,10 @@ class CoreDataRelationshipViewModel: ObservableObject {
         newItem.dateDue = dateDue
         newItem.dateDueSet = dateDueSet
         newItem.isCompleted = false
+        
+        if toFolder != nil {
+            newItem.addToFolders(toFolder!)
+        }
 
         saveData()
     }

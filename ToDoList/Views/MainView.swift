@@ -153,6 +153,10 @@ extension MainView {
                                 vm.updateItem(item: item)
                             }
                             
+                            Button("Add to Folder") {
+                                
+                            }
+                            
                             Button("Edit") {
                                 
                             }

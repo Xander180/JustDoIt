@@ -18,6 +18,7 @@ struct AddItemView: View {
     
     @State private var taskTitle = ""
     @State private var taskNote = ""
+    @State private var addToFolder: FolderEntity?
     
     @State private var alertTitle = ""
     @State private var showAlert = false
@@ -58,6 +59,17 @@ struct AddItemView: View {
                             }
                     }
                 }
+            
+            Picker("Folder", selection: $addToFolder) {
+                let folders: [FolderEntity] = vm.folders
+                Text("None").tag(nil as FolderEntity?)
+                ForEach(folders, id: \.self) {
+                    if $0.title != "Completed" {
+                        Text($0.title ?? "").tag(Optional($0))
+                    }
+                }
+            }
+            .pickerStyle(.navigationLink)
 
         }
         .navigationTitle("Add an Item 🖊️")
@@ -84,7 +96,7 @@ struct AddItemView: View {
     
     func saveButtonPressed() {
         if textIsNotEmpty() {
-            vm.addItem(title: taskTitle, note: taskNote, dateDue: dueDate, dateDueSet: showDueDate)
+            vm.addItem(title: taskTitle, note: taskNote, dateDue: dueDate, dateDueSet: showDueDate, toFolder: addToFolder)
             if scheduleNotification {
                 NotificationManager.instance.scheduleNotification(subtitle: taskTitle ,date: dueDate)
             }
