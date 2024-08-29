@@ -99,7 +99,6 @@ struct AddFolderView: View {
 }
 
 extension AddFolderView {
-    // TODO: Get selected icon to highlight
     private var iconPickerView: some View {
         LazyVGrid(columns: columns) {
             ForEach(folderIcons, id: \.self) { icon in
