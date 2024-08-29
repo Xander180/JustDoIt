@@ -102,8 +102,6 @@ extension MainView {
                     }
                 }
             }
-            
-            //                .onDelete(perform: vm.deleteFolder)
             //                .onMove(perform: listViewModel.moveFolder)
         }
         .padding(.horizontal)

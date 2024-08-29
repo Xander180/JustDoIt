@@ -116,12 +116,6 @@ class CoreDataRelationshipViewModel: ObservableObject {
         saveData()
     }
     
-//    func deleteItem(indexSet: IndexSet) {
-//        let index = indexSet[indexSet.startIndex]
-//        manager.context.delete(items[index])
-//        saveData()
-//    }
-    
     func deleteItem(item: ItemEntity) {
         manager.context.delete(item)
         saveData()

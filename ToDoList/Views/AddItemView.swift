@@ -35,22 +35,12 @@ struct AddItemView: View {
                     taskTitle = item?.title ?? taskTitle
                 }
                 .disabled(editMode != true ? true : false)
-//                    .padding(.horizontal)
-//                    .frame(height: 55)
-//                    .background(Color(UIColor.secondarySystemBackground))
-//                    .clipShape(RoundedRectangle(cornerRadius: 10))
                 
             TextField("Notes", text: $taskNote, axis: .vertical)
                     .multilineTextAlignment(.leading)
                     .onAppear {
                         taskNote = item?.note ?? taskNote
                     }
-//                    .padding(.horizontal)
-//                    .frame(height: 55)
-//                    .frame(maxHeight: 200)
-//                    .background(Color(UIColor.secondarySystemBackground))
-//                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                
                 
                 VStack(spacing: 20) {
                     Toggle("Due Date", isOn: $showDueDate)
@@ -64,6 +54,7 @@ struct AddItemView: View {
                                 .labelsHidden()
                         }
                         
+                        // TODO: Get this to persist for existing tasks
                         Toggle("Set Reminder", isOn: $scheduleNotification)
                             .onChange(of: scheduleNotification) { oldValue, newValue in
                                 NotificationManager.instance.requestAuthorization()
