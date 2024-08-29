@@ -10,6 +10,9 @@ import SwiftUI
 struct AddItemView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var vm: CoreDataRelationshipViewModel
+    var item: ItemEntity?
+    
+    @State private var editMode = true
     
     @State private var showDueDate = false
     @State private var scheduleNotification = false
@@ -18,6 +21,7 @@ struct AddItemView: View {
     
     @State private var taskTitle = ""
     @State private var taskNote = ""
+    @State private var selectedFolder = ""
     @State private var addToFolder: FolderEntity?
     
     @State private var alertTitle = ""
@@ -26,14 +30,21 @@ struct AddItemView: View {
     
     var body: some View {
         Form {
-                TextField("Task title", text: $taskTitle)
+            TextField("Task title", text: $taskTitle)
+                .onAppear {
+                    taskTitle = item?.title ?? taskTitle
+                }
+                .disabled(editMode != true ? true : false)
 //                    .padding(.horizontal)
 //                    .frame(height: 55)
 //                    .background(Color(UIColor.secondarySystemBackground))
 //                    .clipShape(RoundedRectangle(cornerRadius: 10))
                 
-                TextField("Notes", text: $taskNote, axis: .vertical)
+            TextField("Notes", text: $taskNote, axis: .vertical)
                     .multilineTextAlignment(.leading)
+                    .onAppear {
+                        taskNote = item?.note ?? taskNote
+                    }
 //                    .padding(.horizontal)
 //                    .frame(height: 55)
 //                    .frame(maxHeight: 200)
@@ -59,6 +70,12 @@ struct AddItemView: View {
                             }
                     }
                 }
+                .onAppear {
+                    if item?.dateDueSet != nil {
+                        showDueDate = item!.dateDueSet
+                    }
+                    dueDate = item?.dateDue ?? Date.now
+                }
             
             Picker("Folder", selection: $addToFolder) {
                 Text("None").tag(nil as FolderEntity?)
@@ -69,6 +86,9 @@ struct AddItemView: View {
                 }
             }
             .pickerStyle(.navigationLink)
+            .onChange(of: addToFolder) { oldValue, newValue in
+                selectedFolder = addToFolder?.title ?? "None"
+            }
 
         }
         .navigationTitle("Add an Item 🖊️")
@@ -76,20 +96,37 @@ struct AddItemView: View {
         .onChange(of: vm.items) { oldValue, newValue in
             vm.getItems()
         }
+        .onAppear {
+            if item != nil {
+                editMode = false
+            }
+        }
         
-        Button(action: saveButtonPressed,
-               label: {
-            Text("Save".uppercased())
-                .foregroundStyle(.white)
-                .font(.headline)
-                .frame(height: 55)
-                .frame(maxWidth: .infinity)
-                .background(Color.accentColor)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-        })
-        .padding(14)
-        .alert(alertTitle, isPresented: $showAlert) {
-            
+        if editMode {
+            Button(action: saveButtonPressed,
+                   label: {
+                Text("Save".uppercased())
+                    .foregroundStyle(.white)
+                    .font(.headline)
+                    .frame(width: 350, height: 55)
+//                    .frame(maxWidth: 500)
+                    .background(Color.accentColor)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            })
+            .padding(14)
+            .alert(alertTitle, isPresented: $showAlert) {
+                
+            }
+        } else {
+            Button(action: {vm.updateItem(item: item!)}, label: {
+                Text(item!.isCompleted ? "Mark Incomplete".uppercased() : "Mark Completed".uppercased())
+                    .foregroundStyle(.white)
+                    .font(.headline)
+                    .frame(width: 350, height: 55)
+//                    .frame(maxWidth: 400)
+                    .background(Color.accentColor)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            })
         }
     }
     

@@ -139,11 +139,13 @@ extension MainView {
             
             ForEach(isSorted ? vm.sortedItems : vm.items) { item in
                 if !item.isCompleted {
-                    ListItemView(item: item)
+                    NavigationLink(destination: AddItemView(vm: vm, item: item)) {
+                        ListItemView(item: item)
+                    }
                         .listRowSeparator(.hidden)
                         .onTapGesture {
                             withAnimation(.linear) {
-                                vm.updateItem(item: item)
+//                                vm.updateItem(item: item)
                             }
                         }
                         .onDelete {
