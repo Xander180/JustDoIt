@@ -152,7 +152,7 @@ extension MainView {
                         .contextMenu {
                             
                             Button("Mark Completed") {
-                                vm.updateItem(item: item)
+                                vm.isCompleted(item: item)
                             }
                             
                             Picker("Add to Folder", selection: $folderSelection) {

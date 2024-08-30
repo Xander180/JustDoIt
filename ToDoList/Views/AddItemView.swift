@@ -41,6 +41,7 @@ struct AddItemView: View {
                     .onAppear {
                         taskNote = item?.note ?? taskNote
                     }
+                    .disabled(editMode != true ? true : false)
                 
                 VStack(spacing: 20) {
                     Toggle("Due Date", isOn: $showDueDate)
@@ -67,7 +68,9 @@ struct AddItemView: View {
                     }
                     dueDate = item?.dateDue ?? Date.now
                 }
+                .disabled(editMode != true ? true : false)
             
+            // TODO: Load selected folder for existing task
             Picker("Folder", selection: $addToFolder) {
                 Text("None").tag(nil as FolderEntity?)
                 ForEach(vm.folders, id: \.self) {
@@ -92,6 +95,18 @@ struct AddItemView: View {
                 editMode = false
             }
         }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                if item != nil {
+                    Button(editMode == false ? "Edit" : "Undo") {
+                        if editMode {
+                            undoEdit()
+                        }
+                        editMode.toggle()
+                    }
+                }
+            }
+        }
         
         if editMode {
             Button(action: saveButtonPressed,
@@ -109,8 +124,8 @@ struct AddItemView: View {
                 
             }
         } else {
-            Button(action: {vm.updateItem(item: item!)}, label: {
-                Text(item!.isCompleted ? "Mark Incomplete".uppercased() : "Mark Completed".uppercased())
+            Button(action: {vm.isCompleted(item: item!)}, label: {
+                Text(item?.isCompleted ?? false ? "Mark Incomplete".uppercased() : "Mark Completed".uppercased())
                     .foregroundStyle(.white)
                     .font(.headline)
                     .frame(width: 350, height: 55)
@@ -118,16 +133,24 @@ struct AddItemView: View {
                     .background(Color.accentColor)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
             })
+            .padding(14)
+            .alert(alertTitle, isPresented: $showAlert) {
+            }
         }
     }
     
     func saveButtonPressed() {
         if textIsNotEmpty() {
-            vm.addItem(title: taskTitle, note: taskNote, dateDue: dueDate, dateDueSet: showDueDate, toFolder: addToFolder, setReminder: setReminder)
+            if item == nil {
+                vm.addItem(title: taskTitle, note: taskNote, dateDue: dueDate, dateDueSet: showDueDate, toFolder: addToFolder, setReminder: setReminder)
+            } else {
+                vm.updateItem(item: item!, title: taskTitle, note: taskNote, dateDue: dueDate, dateDueSet: showDueDate, toFolder: addToFolder, setReminder: setReminder)
+            }
             if setReminder {
                 NotificationManager.instance.scheduleNotification(subtitle: taskTitle ,date: dueDate)
             }
-            dismiss.callAsFunction()
+//            dismiss.callAsFunction()
+            editMode = false
         }
     }
     
@@ -138,6 +161,13 @@ struct AddItemView: View {
             return false
         }
        return true
+    }
+    
+    func undoEdit() {
+        taskTitle = item!.title!
+        taskNote = item!.note!
+        showDueDate = item!.dateDueSet
+        setReminder = item!.setReminder
     }
 }
 

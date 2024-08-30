@@ -65,7 +65,23 @@ class CoreDataRelationshipViewModel: ObservableObject {
         saveData()
     }
     
-    func updateItem(item: ItemEntity) {
+    func updateItem(item: ItemEntity, title: String, note: String, dateDue: Date, dateDueSet: Bool, toFolder: FolderEntity?, setReminder: Bool) {
+        item.title = title
+        item.note = note
+        item.dateCreated = Date.now
+        item.dateDue = dateDue
+        item.dateDueSet = dateDueSet
+        item.isCompleted = false
+        item.setReminder = setReminder
+        
+        if toFolder != nil {
+            addToFolder(item: item, folder: toFolder!)
+        }
+        
+        saveData()
+    }
+    
+    func isCompleted(item: ItemEntity) {
         item.isCompleted.toggle()
         
         if let folderIndex = folders.firstIndex(where: { $0.title == "Completed" }) {
@@ -86,6 +102,7 @@ class CoreDataRelationshipViewModel: ObservableObject {
     }
     
     func addToFolder(item: ItemEntity, folder: FolderEntity) {
+//        item.removeFromFolders(item.folders!)
         item.addToFolders(folder)
         
         saveData()
