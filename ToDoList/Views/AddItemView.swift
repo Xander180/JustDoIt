@@ -15,7 +15,7 @@ struct AddItemView: View {
     @State private var editMode = true
     
     @State private var showDueDate = false
-    @State private var scheduleNotification = false
+    @State private var setReminder = false
     @State private var showReminderOptions = false
     @State private var dueDate: Date = Date.now
     
@@ -54,9 +54,8 @@ struct AddItemView: View {
                                 .labelsHidden()
                         }
                         
-                        // TODO: Get this to persist for existing tasks
-                        Toggle("Set Reminder", isOn: $scheduleNotification)
-                            .onChange(of: scheduleNotification) { oldValue, newValue in
+                        Toggle("Set Reminder", isOn: $setReminder)
+                            .onChange(of: setReminder) { oldValue, newValue in
                                 NotificationManager.instance.requestAuthorization()
                             }
                     }
@@ -64,6 +63,7 @@ struct AddItemView: View {
                 .onAppear {
                     if item?.dateDueSet != nil {
                         showDueDate = item!.dateDueSet
+                        setReminder = item!.setReminder
                     }
                     dueDate = item?.dateDue ?? Date.now
                 }
@@ -123,8 +123,8 @@ struct AddItemView: View {
     
     func saveButtonPressed() {
         if textIsNotEmpty() {
-            vm.addItem(title: taskTitle, note: taskNote, dateDue: dueDate, dateDueSet: showDueDate, toFolder: addToFolder)
-            if scheduleNotification {
+            vm.addItem(title: taskTitle, note: taskNote, dateDue: dueDate, dateDueSet: showDueDate, toFolder: addToFolder, setReminder: setReminder)
+            if setReminder {
                 NotificationManager.instance.scheduleNotification(subtitle: taskTitle ,date: dueDate)
             }
             dismiss.callAsFunction()
