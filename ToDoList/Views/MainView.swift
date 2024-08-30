@@ -10,6 +10,7 @@ import SwiftUI
 struct MainView: View {
     @StateObject var vm = CoreDataRelationshipViewModel()
     @State private var showAlert = false
+    @State var folderSelection: FolderEntity?
     @AppStorage("is_sorted") private var isSorted = false
     @AppStorage("sort_by") private var selection = ItemSortModel.Options.original
     
@@ -91,16 +92,16 @@ extension MainView {
                         .foregroundStyle(Color.defaultItem)
                 }
                 .contextMenu {
-                    Button("Edit Folder") {
-                        
-                    }
-                    Button("Delete Folder") {
-                        vm.deleteFolder(folder: folder)
+                    if folder != vm.folders[0] {
+                        Button("Edit Folder") {
+                            
+                        }
+                        Button("Delete Folder") {
+                            vm.deleteFolder(folder: folder)
+                        }
                     }
                 }
             }
-            
-            //                .onDelete(perform: vm.deleteFolder)
             //                .onMove(perform: listViewModel.moveFolder)
         }
         .padding(.horizontal)
@@ -136,20 +137,35 @@ extension MainView {
             
             ForEach(isSorted ? vm.sortedItems : vm.items) { item in
                 if !item.isCompleted {
-                    ListItemView(item: item)
+                    NavigationLink(destination: AddItemView(vm: vm, item: item)) {
+                        ListItemView(item: item)
+                    }
                         .listRowSeparator(.hidden)
                         .onTapGesture {
                             withAnimation(.linear) {
-                                vm.updateItem(item: item)
+//                                vm.updateItem(item: item)
                             }
                         }
                         .onDelete {
                             vm.deleteItem(item: item)
                         }
                         .contextMenu {
+                            
                             Button("Mark Completed") {
-                                vm.updateItem(item: item)
+                                vm.isCompleted(item: item)
                             }
+                            
+                            Picker("Add to Folder", selection: $folderSelection) {
+                                ForEach(vm.folders, id: \.self) { folder in
+                                    if folder.title != "Completed" && !folder.items!.contains(item) {
+                                        Text(folder.title ?? "").tag(Optional(folder))
+                                            .onTapGesture {
+                                                vm.addToFolder(item: item, folder: folder)
+                                            }
+                                    }
+                                }
+                            }
+                            .pickerStyle(.navigationLink)
                             
                             Button("Edit") {
                                 

@@ -21,7 +21,7 @@ struct FolderView: View {
                             .listRowSeparator(.hidden)
                             .onTapGesture {
                                 withAnimation(.linear) {
-                                    vm.updateItem(item: item)
+                                    vm.isCompleted(item: item)
                                 }
                             }
                             .onDelete {
@@ -29,7 +29,7 @@ struct FolderView: View {
                             }
                             .contextMenu {
                                 Button("Mark Incomplete") {
-                                    vm.updateItem(item: item)
+                                    vm.isCompleted(item: item)
                                 }
                                 
                                 Button("Edit") {

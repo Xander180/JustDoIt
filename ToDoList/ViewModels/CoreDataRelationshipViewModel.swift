@@ -48,7 +48,7 @@ class CoreDataRelationshipViewModel: ObservableObject {
         }
     }
     
-    func addItem(title: String, note: String, dateDue: Date, dateDueSet: Bool) {
+    func addItem(title: String, note: String, dateDue: Date, dateDueSet: Bool, toFolder: FolderEntity?, setReminder: Bool) {
         let newItem = ItemEntity(context: manager.context)
         newItem.title = title
         newItem.note = note
@@ -56,11 +56,32 @@ class CoreDataRelationshipViewModel: ObservableObject {
         newItem.dateDue = dateDue
         newItem.dateDueSet = dateDueSet
         newItem.isCompleted = false
+        newItem.setReminder = setReminder
+        
+        if toFolder != nil {
+            addToFolder(item: newItem, folder: toFolder!)
+        }
 
         saveData()
     }
     
-    func updateItem(item: ItemEntity) {
+    func updateItem(item: ItemEntity, title: String, note: String, dateDue: Date, dateDueSet: Bool, toFolder: FolderEntity?, setReminder: Bool) {
+        item.title = title
+        item.note = note
+        item.dateCreated = Date.now
+        item.dateDue = dateDue
+        item.dateDueSet = dateDueSet
+        item.isCompleted = false
+        item.setReminder = setReminder
+        
+        if toFolder != nil {
+            addToFolder(item: item, folder: toFolder!)
+        }
+        
+        saveData()
+    }
+    
+    func isCompleted(item: ItemEntity) {
         item.isCompleted.toggle()
         
         if let folderIndex = folders.firstIndex(where: { $0.title == "Completed" }) {
@@ -76,6 +97,13 @@ class CoreDataRelationshipViewModel: ObservableObject {
         } else {
             items.append(item)
         }
+        
+        saveData()
+    }
+    
+    func addToFolder(item: ItemEntity, folder: FolderEntity) {
+//        item.removeFromFolders(item.folders!)
+        item.addToFolders(folder)
         
         saveData()
     }
@@ -105,12 +133,6 @@ class CoreDataRelationshipViewModel: ObservableObject {
         
         saveData()
     }
-    
-//    func deleteItem(indexSet: IndexSet) {
-//        let index = indexSet[indexSet.startIndex]
-//        manager.context.delete(items[index])
-//        saveData()
-//    }
     
     func deleteItem(item: ItemEntity) {
         manager.context.delete(item)
