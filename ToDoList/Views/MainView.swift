@@ -96,7 +96,7 @@ extension MainView {
                         Button("Edit Folder") {
                             
                         }
-                        Button("Delete Folder") {
+                        Button("Delete", role: .destructive) {
                             vm.deleteFolder(folder: folder)
                         }
                     }
@@ -169,7 +169,7 @@ extension MainView {
                             
                             NavigationLink("Edit", destination: AddItemView(vm: vm, item: item))
                             
-                            Button("Delete") {
+                            Button("Delete", role: .destructive) {
                                 vm.deleteItem(item: item)
                             }
                         }

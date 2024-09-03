@@ -125,17 +125,24 @@ struct AddItemView: View {
                 
             }
         } else {
-            Button(action: {vm.isCompleted(item: item!)}, label: {
-                Text(item?.isCompleted ?? false ? "Mark Incomplete".uppercased() : "Mark Completed".uppercased())
-                    .foregroundStyle(.white)
-                    .font(.headline)
-                    .frame(width: 350, height: 55)
-//                    .frame(maxWidth: 400)
-                    .background(Color.accentColor)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-            })
-            .padding(14)
-            .alert(alertTitle, isPresented: $showAlert) {
+            VStack {
+                Button("Delete", role: .destructive) {
+                    vm.deleteItem(item: item!)
+                    dismiss.callAsFunction()
+                }
+                
+                Button(action: {vm.isCompleted(item: item!)}, label: {
+                    Text(item?.isCompleted ?? false ? "Mark Incomplete".uppercased() : "Mark Completed".uppercased())
+                        .foregroundStyle(.white)
+                        .font(.headline)
+                        .frame(width: 350, height: 55)
+                    //                    .frame(maxWidth: 400)
+                        .background(Color.accentColor)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                })
+                .padding(14)
+                .alert(alertTitle, isPresented: $showAlert) {
+                }
             }
         }
     }
@@ -150,8 +157,8 @@ struct AddItemView: View {
             if setReminder {
                 NotificationManager.instance.scheduleNotification(subtitle: taskTitle ,date: dueDate)
             }
-//            dismiss.callAsFunction()
-            editMode = false
+            dismiss.callAsFunction()
+//            editMode = false
         }
     }
     

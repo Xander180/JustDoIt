@@ -31,7 +31,7 @@ struct AddFolderView: View {
     ]
     
     var body: some View {
-        ScrollView {
+        Form {
             VStack(spacing: 20) {
                 Image(systemName: folderIcon)
                     .resizable()
@@ -110,18 +110,23 @@ struct AddFolderView: View {
 }
 
 extension AddFolderView {
-    // TODO: Get selected icon to highlight
     private var iconPickerView: some View {
         LazyVGrid(columns: columns) {
             ForEach(folderIcons, id: \.self) { icon in
-                Image(systemName: icon)
-                    .font(.title)
-                    .padding()
-                    .clipShape(Circle())
-                    .overlay(Circle().strokeBorder(.black).frame(width: 50, height: 50))
-                    .onTapGesture {
-                        folderIcon = icon
+                ZStack {
+                    Circle()
+                        .foregroundStyle(Color.secondary)
+                        .frame(height: 40)
+                    
+                    Image(systemName: icon)
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .padding()
+                        .overlay(Circle().strokeBorder(.black).frame(height: icon == folderIcon ? 45 : 0))
+                        .onTapGesture {
+                            folderIcon = icon
                     }
+                }
             }
         }
     }
