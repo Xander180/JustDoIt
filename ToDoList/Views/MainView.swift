@@ -150,7 +150,6 @@ extension MainView {
                             vm.deleteItem(item: item)
                         }
                         .contextMenu {
-                            
                             Button("Mark Completed") {
                                 vm.isCompleted(item: item)
                             }
@@ -159,17 +158,16 @@ extension MainView {
                                 ForEach(vm.folders, id: \.self) { folder in
                                     if folder.title != "Completed" && !folder.items!.contains(item) {
                                         Text(folder.title ?? "").tag(Optional(folder))
-                                            .onTapGesture {
-                                                vm.addToFolder(item: item, folder: folder)
+                                            .onChange(of: folderSelection) { oldValue, newValue in
+                                                vm.addToFolder(item: item, folder: folderSelection!)
                                             }
+
                                     }
                                 }
                             }
-                            .pickerStyle(.navigationLink)
+                            .pickerStyle(.menu)
                             
-                            Button("Edit") {
-                                
-                            }
+                            NavigationLink("Edit", destination: AddItemView(vm: vm, item: item))
                             
                             Button("Delete") {
                                 vm.deleteItem(item: item)

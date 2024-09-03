@@ -79,10 +79,11 @@ struct AddItemView: View {
                     }
                 }
             }
-            .pickerStyle(.navigationLink)
+            .pickerStyle(.menu)
             .onChange(of: addToFolder) { oldValue, newValue in
                 selectedFolder = addToFolder?.title ?? "None"
             }
+            .disabled(editMode != true ? true : false)
 
         }
         .navigationTitle("Add an Item 🖊️")
