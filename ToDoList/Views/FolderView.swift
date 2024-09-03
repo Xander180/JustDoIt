@@ -11,13 +11,16 @@ struct FolderView: View {
     @ObservedObject var vm: CoreDataRelationshipViewModel
     let manager = ToDoListManager.instance
     let folder: FolderEntity
+    @State var folderSelection: FolderEntity?
     @AppStorage("is_sorted") private var isSorted = false
     @AppStorage("sort_by") private var selection = ItemSortModel.Options.original
     
     var body: some View {
             List {
                 ForEach(Array(folder.items as? Set<ItemEntity> ?? [])) { item in
+                    NavigationLink(destination: AddItemView(vm: vm, item: item)) {
                         ListItemView(item: item)
+                    }
                             .listRowSeparator(.hidden)
                             .onTapGesture {
                                 withAnimation(.linear) {
@@ -32,9 +35,20 @@ struct FolderView: View {
                                     vm.isCompleted(item: item)
                                 }
                                 
-                                Button("Edit") {
-                                    
+                                Picker("Move to Folder", selection: $folderSelection) {
+                                    ForEach(vm.folders, id: \.self) { folder in
+                                        if folder.title != "Completed" && !folder.items!.contains(item) {
+                                            Text(folder.title ?? "").tag(Optional(folder))
+                                                .onChange(of: folderSelection) { oldValue, newValue in
+                                                    vm.addToFolder(item: item, folder: folderSelection!)
+                                                }
+                                            
+                                        }
+                                    }
                                 }
+                                .pickerStyle(.menu)
+                                
+                                NavigationLink("Edit", destination: AddItemView(vm: vm, item: item))
                                 
                                 Button("Delete") {
                                     vm.deleteItem(item: item)

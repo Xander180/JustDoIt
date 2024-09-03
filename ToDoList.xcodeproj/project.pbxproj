@@ -42,6 +42,7 @@
 		6089647B2C4964AC007493BE /* CoreDataRelationshipViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataRelationshipViewModel.swift; sourceTree = "<group>"; };
 		608964812C496782007493BE /* CoreDataContainer.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreDataContainer.xcdatamodel; sourceTree = "<group>"; };
 		608964852C497582007493BE /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
+		6095DDB52C8765BE00D9340B /* CoreDataContainer 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "CoreDataContainer 2.xcdatamodel"; sourceTree = "<group>"; };
 		6097E94D2C0A4C0C00343BF7 /* ToDoList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDoList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6097E9502C0A4C0C00343BF7 /* ToDoListApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToDoListApp.swift; sourceTree = "<group>"; };
 		6097E9542C0A4C0E00343BF7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -459,9 +460,10 @@
 		608964802C496782007493BE /* CoreDataContainer.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				6095DDB52C8765BE00D9340B /* CoreDataContainer 2.xcdatamodel */,
 				608964812C496782007493BE /* CoreDataContainer.xcdatamodel */,
 			);
-			currentVersion = 608964812C496782007493BE /* CoreDataContainer.xcdatamodel */;
+			currentVersion = 6095DDB52C8765BE00D9340B /* CoreDataContainer 2.xcdatamodel */;
 			name = CoreDataContainer.xcdatamodeld;
 			path = /Users/binaryphishing/XcodeProjects/ToDoList/ToDoList/Models/CoreDataContainer.xcdatamodeld;
 			sourceTree = "<group>";

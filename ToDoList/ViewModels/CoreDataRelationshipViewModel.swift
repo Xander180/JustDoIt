@@ -103,7 +103,8 @@ class CoreDataRelationshipViewModel: ObservableObject {
     
     func addToFolder(item: ItemEntity, folder: FolderEntity) {
 //        item.removeFromFolders(item.folders!)
-        item.addToFolders(folder)
+//        item.addToFolders(folder)
+        folder.addToItems(item)
         
         saveData()
     }
